@@ -1,0 +1,55 @@
+<section class="filtros">
+    <input type="search" placeholder="Buscar película" [(ngModel)]="texto" (keyup.enter)="buscar()" />
+
+    <select [(ngModel)]="generoId" (change)="buscar()">
+        <option value="">Todos los géneros</option>
+        @for (g of generos(); track g.id) {
+        <option [value]="g.id">{{ g.nombre }}</option>
+        }
+    </select>
+
+    <button type="button" (click)="buscar()">Buscar</button>
+    <button type="button" class="secundario" (click)="limpiar()">Limpiar</button>
+</section>
+
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+@if (cargando()) {
+<p class="aviso">Cargando cartelera...</p>
+} @else {
+<div class="grilla">
+    @for (p of peliculas(); track p.id) {
+    <article class="tarjeta">
+        <div class="poster">
+            @if (p.poster_url) {
+            <img [src]="p.poster_url" [alt]="p.titulo" />
+            } @else {
+            <span>{{ p.titulo.charAt(0) }}</span>
+            }
+        </div>
+
+        <div class="datos">
+            <h2>{{ p.titulo }}</h2>
+            <p class="meta">
+                <span class="edad">{{ etiquetaEdad(p.clasificacion) }}</span>
+                {{ duracion(p.duracion_min) }}
+            </p>
+
+            @if (p.generos.length) {
+            <ul class="generos">
+                @for (g of p.generos; track g.id) {
+                <li>{{ g.nombre }}</li>
+                }
+            </ul>
+            }
+
+            <p class="sinopsis">{{ p.sinopsis }}</p>
+        </div>
+    </article>
+    } @empty {
+    <p class="aviso">No hay películas que coincidan con la búsqueda.</p>
+    }
+</div>
+}

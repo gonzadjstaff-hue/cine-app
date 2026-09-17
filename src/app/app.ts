@@ -1,20 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { SupabaseService } from './core/services/supabase';
+import { Component } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('cine-app');
-  private readonly supabase = inject(SupabaseService);
-
-  constructor() {
-    this.supabase.client.auth.getSession().then(({ data, error }) => {
-      console.log('Supabase conectado', { data, error });
-    });
-  }
+  protected readonly nombre = 'CineApp';
 }

@@ -1,0 +1,42 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: #111827;
+    background: #fafafa;
+}
+
+.barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.875rem 1.25rem;
+    background: #111827;
+    color: #fff;
+}
+
+.marca {
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    color: #fff;
+    text-decoration: none;
+}
+
+nav a {
+    color: #d1d5db;
+    text-decoration: none;
+    font-size: 0.9rem;
+
+    &.activo {
+        color: #fff;
+        font-weight: 600;
+    }
+}
+
+.contenido {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 3rem;
+}
