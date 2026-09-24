@@ -74,7 +74,7 @@ returns trigger
 language plpgsql
 as $$
 begin
-  if es_admin() then
+  if auth.uid() is null or es_admin() then
     return new;
   end if;
 

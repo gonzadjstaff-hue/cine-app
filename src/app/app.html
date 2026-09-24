@@ -1,7 +1,26 @@
 <header class="barra">
   <a class="marca" routerLink="/cartelera">{{ nombre }}</a>
+
   <nav>
     <a routerLink="/cartelera" routerLinkActive="activo">Cartelera</a>
+
+    @if (auth.esAdmin()) {
+      <a routerLink="/admin/peliculas" routerLinkActive="activo">Películas</a>
+      <a routerLink="/admin/funciones" routerLinkActive="activo">Funciones</a>
+    }
+
+    @if (auth.autenticado()) {
+      <span class="usuario">
+        {{ auth.nombreCompleto() }}
+        @if (auth.esStaff()) {
+          <em class="rol">{{ auth.rol() }}</em>
+        }
+      </span>
+      <button type="button" class="salir" (click)="salir()">Salir</button>
+    } @else {
+      <a routerLink="/ingresar" routerLinkActive="activo">Ingresar</a>
+      <a routerLink="/registro" routerLinkActive="activo">Crear cuenta</a>
+    }
   </nav>
 </header>
 

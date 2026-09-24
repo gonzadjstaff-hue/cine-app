@@ -1,0 +1,111 @@
+<h1>Administrar películas</h1>
+
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+<div class="columnas">
+    <section class="listado">
+        <div class="encabezado">
+            <h2>{{ peliculas().length }} películas</h2>
+            <button type="button" (click)="nuevo()">Nueva</button>
+        </div>
+
+        @for (p of peliculas(); track p.id) {
+        <article [class.activa]="editando() === p.id">
+            <div>
+                <strong>{{ p.titulo }}</strong>
+                <span class="meta">
+                    {{ etiquetaEdad(p.clasificacion) }} · {{ p.duracion_min }} min · {{ p.estado }}
+                    @if (p.destacada_home) {
+                    <em class="destacada">destacada</em>
+                    }
+                </span>
+            </div>
+            <div class="acciones">
+                <button type="button" (click)="editar(p)">Editar</button>
+                <button type="button" class="peligro" (click)="eliminar(p)">Borrar</button>
+            </div>
+        </article>
+        } @empty {
+        <p class="aviso">Todavía no hay películas cargadas.</p>
+        }
+    </section>
+
+    <section class="panel">
+        <h2>{{ editando() ? 'Editar película' : 'Nueva película' }}</h2>
+
+        <form [formGroup]="formulario" (ngSubmit)="guardar()">
+            <label>
+                Título
+                <input type="text" formControlName="titulo" />
+            </label>
+
+            <label>
+                URL del póster
+                <input type="url" formControlName="poster_url" placeholder="https://..." />
+            </label>
+
+            <div class="fila">
+                <label>
+                    Duración (min)
+                    <input type="number" formControlName="duracion_min" min="1" />
+                </label>
+
+                <label>
+                    Estreno
+                    <input type="date" formControlName="fecha_estreno" />
+                </label>
+            </div>
+
+            <div class="fila">
+                <label>
+                    Clasificación
+                    <select formControlName="clasificacion">
+                        @for (c of clasificaciones; track c) {
+                        <option [value]="c">{{ etiquetaEdad(c) }}</option>
+                        }
+                    </select>
+                </label>
+
+                <label>
+                    Estado
+                    <select formControlName="estado">
+                        <option value="cartelera">En cartelera</option>
+                        <option value="proximamente">Próximamente</option>
+                        <option value="archivada">Archivada</option>
+                    </select>
+                </label>
+            </div>
+
+            <label>
+                Sinopsis
+                <textarea formControlName="sinopsis" rows="4"></textarea>
+            </label>
+
+            <fieldset>
+                <legend>Géneros</legend>
+                <div class="chips">
+                    @for (g of generos(); track g.id) {
+                    <button
+                        type="button"
+                        class="chip"
+                        [class.elegido]="tieneGenero(g.id)"
+                        (click)="alternarGenero(g.id)">
+                        {{ g.nombre }}
+                    </button>
+                    }
+                </div>
+            </fieldset>
+
+            <label class="check">
+                <input type="checkbox" formControlName="destacada_home" />
+                Mostrar en la portada
+            </label>
+
+            <button type="submit" [disabled]="enviando()">
+                {{ enviando() ? 'Guardando...' : 'Guardar' }}
+            </button>
+        </form>
+    </section>
+</div>

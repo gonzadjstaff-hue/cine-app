@@ -1,0 +1,100 @@
+<h1>Programar funciones</h1>
+
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+@if (aviso()) {
+<p class="aviso-ok">{{ aviso() }}</p>
+}
+
+<div class="columnas">
+    <section class="panel">
+        <h2>Nueva programaci\u00f3n</h2>
+
+        <form [formGroup]="formulario" (ngSubmit)="programar()">
+            <label>
+                Pel\u00edcula
+                <select formControlName="movieId">
+                    <option value="">Elegir</option>
+                    @for (p of peliculas(); track p.id) {
+                    <option [value]="p.id">{{ p.titulo }} ({{ p.duracion_min }} min)</option>
+                    }
+                </select>
+            </label>
+
+            <label>
+                Fecha
+                <input type="date" formControlName="fecha" />
+            </label>
+
+            <fieldset>
+                <legend>Horarios</legend>
+                <div class="chips">
+                    @for (h of horariosSugeridos; track h) {
+                    <button
+                        type="button"
+                        class="chip"
+                        [class.elegido]="tieneHorario(h)"
+                        (click)="alternarHorario(h)">
+                        {{ h }}
+                    </button>
+                    }
+                </div>
+            </fieldset>
+
+            <div class="fila">
+                <label>
+                    Formato
+                    <select formControlName="formato">
+                        @for (f of formatos; track f) {
+                        <option [value]="f">{{ f }}</option>
+                        }
+                    </select>
+                </label>
+
+                <label>
+                    Idioma
+                    <select formControlName="idioma">
+                        @for (i of idiomas; track i) {
+                        <option [value]="i">{{ i }}</option>
+                        }
+                    </select>
+                </label>
+            </div>
+
+            <label>
+                Precio base
+                <input type="number" formControlName="precio" min="0" step="100" />
+            </label>
+
+            <button type="submit" [disabled]="enviando()">
+                {{ enviando() ? 'Programando...' : 'Programar' }}
+            </button>
+        </form>
+    </section>
+
+    <section class="listado">
+        <div class="encabezado">
+            <h2>Funciones del d\u00eda</h2>
+            <input
+                type="date"
+                [value]="fechaListado()"
+                (change)="cambiarFecha($any($event.target).value)" />
+        </div>
+
+        @for (f of funciones(); track f.id) {
+        <article>
+            <div>
+                <strong>{{ hora(f.inicio) }} \u00b7 {{ f.pelicula }}</strong>
+                <span class="meta">
+                    {{ f.sala }} \u00b7 {{ f.formato }} \u00b7 {{ f.idioma }} \u00b7 termina {{ hora(f.fin) }}
+                </span>
+            </div>
+            <button type="button" class="peligro" (click)="eliminar(f)">Borrar</button>
+        </article>
+        } @empty {
+        <p class="aviso">No hay funciones programadas para esa fecha.</p>
+        }
+    </section>
+</div>

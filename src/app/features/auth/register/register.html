@@ -1,0 +1,45 @@
+<section class="panel">
+    <h1>Crear cuenta</h1>
+
+    <form [formGroup]="formulario" (ngSubmit)="enviar()">
+        <div class="fila">
+            <label>
+                Nombre
+                <input type="text" formControlName="nombre" />
+            </label>
+
+            <label>
+                Apellido
+                <input type="text" formControlName="apellido" />
+            </label>
+        </div>
+
+        <label>
+            Email
+            <input type="email" formControlName="email" autocomplete="email" />
+        </label>
+
+        <label>
+            Contraseña
+            <input type="password" formControlName="password" autocomplete="new-password" />
+        </label>
+
+        <label>
+            Fecha de nacimiento
+            <input type="date" formControlName="fechaNacimiento" />
+            <small>La usamos solo para validar la clasificación por edad de cada película.</small>
+        </label>
+
+        @if (error()) {
+        <p class="error">{{ error() }}</p>
+        }
+
+        <button type="submit" [disabled]="enviando()">
+            {{ enviando() ? 'Creando cuenta...' : 'Crear cuenta' }}
+        </button>
+    </form>
+
+    <p class="pie">
+        ¿Ya tenés cuenta? <a routerLink="/ingresar">Ingresá</a>
+    </p>
+</section>
