@@ -1,27 +1,42 @@
 :host {
     display: block;
     min-height: 100vh;
-    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-    color: #111827;
-    background: #fafafa;
+    color: var(--texto);
+    background: var(--fondo);
 }
 
 .barra {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.875rem 1.25rem;
-    background: #111827;
-    color: #fff;
+    padding: 0.8rem 1.5rem;
+    background: var(--tinta);
+    color: var(--superficie);
+    border-bottom: 3px solid var(--acento);
 }
 
 .marca {
-    font-weight: 700;
-    font-size: 1.15rem;
-    letter-spacing: 0.02em;
-    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    color: var(--superficie);
     text-decoration: none;
+
+    &::before {
+        content: '';
+        width: 0.7rem;
+        height: 0.7rem;
+        border-radius: 50%;
+        background: var(--acento);
+        box-shadow: 0 0 0 4px rgb(212 24 61 / 25%);
+    }
 }
 
 nav {
@@ -31,26 +46,26 @@ nav {
 }
 
 nav a {
-    color: #d1d5db;
+    color: var(--borde);
     text-decoration: none;
     font-size: 0.9rem;
 
     &.activo {
-        color: #fff;
+        color: var(--superficie);
         font-weight: 600;
     }
 }
 
 .usuario {
     font-size: 0.85rem;
-    color: #f3f4f6;
+    color: var(--superficie-2);
 }
 
 .rol {
     margin-left: 0.4rem;
     padding: 0.1rem 0.4rem;
     border-radius: 0.25rem;
-    background: #374151;
+    background: var(--acento);
     font-style: normal;
     font-size: 0.7rem;
     text-transform: uppercase;
@@ -58,17 +73,17 @@ nav a {
 
 .salir {
     padding: 0.35rem 0.75rem;
-    border: 1px solid #4b5563;
+    border: 1px solid var(--texto-3);
     border-radius: 0.375rem;
     background: transparent;
-    color: #d1d5db;
+    color: var(--borde);
     font: inherit;
     font-size: 0.85rem;
     cursor: pointer;
 }
 
 .contenido {
-    max-width: 56rem;
+    max-width: 60rem;
     margin: 0 auto;
     padding: 1.5rem 1.25rem 3rem;
 }

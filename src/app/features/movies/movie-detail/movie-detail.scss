@@ -10,8 +10,8 @@
     display: grid;
     place-items: center;
     border-radius: 0.5rem;
-    background: #1f2937;
-    color: #fff;
+    background: var(--tinta-2);
+    color: var(--superficie);
     font-size: 3rem;
     overflow: hidden;
 
@@ -35,14 +35,14 @@ h2 {
 h3 {
     margin: 0 0 0.5rem;
     font-size: 0.9rem;
-    color: #6b7280;
+    color: var(--texto-3);
     font-weight: 500;
     text-transform: capitalize;
 }
 
 .meta {
     margin: 0 0 0.6rem;
-    color: #6b7280;
+    color: var(--texto-3);
     font-size: 0.85rem;
 }
 
@@ -51,8 +51,8 @@ h3 {
     margin-right: 0.5rem;
     padding: 0.1rem 0.4rem;
     border-radius: 0.25rem;
-    background: #fee2e2;
-    color: #991b1b;
+    background: var(--acento-suave);
+    color: var(--acento-2);
     font-weight: 600;
 }
 
@@ -67,7 +67,7 @@ h3 {
     li {
         padding: 0.1rem 0.5rem;
         border-radius: 999px;
-        background: #f3f4f6;
+        background: var(--superficie-2);
         font-size: 0.75rem;
     }
 }
@@ -81,8 +81,8 @@ h3 {
     margin: 0;
     padding: 0.5rem 0.75rem;
     border-radius: 0.4rem;
-    background: #fef3c7;
-    color: #92400e;
+    background: var(--vip-suave);
+    color: var(--alerta);
     font-size: 0.82rem;
 }
 
@@ -101,10 +101,10 @@ h3 {
     flex-direction: column;
     gap: 0.1rem;
     padding: 0.5rem 0.85rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--borde);
     border-radius: 0.5rem;
-    background: #fff;
-    color: #111827;
+    background: var(--superficie);
+    color: var(--tinta);
     text-decoration: none;
 
     strong {
@@ -112,21 +112,21 @@ h3 {
     }
 
     span {
-        color: #6b7280;
+        color: var(--texto-3);
         font-size: 0.75rem;
     }
 
     &:hover {
-        border-color: #111827;
+        border-color: var(--tinta);
     }
 }
 
 .aviso {
-    color: #6b7280;
+    color: var(--texto-3);
 }
 
 .error {
-    color: #b91c1c;
+    color: var(--error);
 }
 
 @media (max-width: 36rem) {
@@ -137,7 +137,7 @@ h3 {
 
 .puntaje {
     margin-left: 0.5rem;
-    color: #b45309;
+    color: var(--alerta);
     font-weight: 600;
 }
 
@@ -148,9 +148,9 @@ h3 {
 .mi-resena {
     padding: 1rem 1.15rem;
     margin-bottom: 1.25rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--borde-2);
     border-radius: 0.55rem;
-    background: #fff;
+    background: var(--superficie);
 
     .titulo {
         margin: 0 0 0.5rem;
@@ -162,7 +162,7 @@ h3 {
         width: 100%;
         margin-top: 0.6rem;
         padding: 0.5rem 0.7rem;
-        border: 1px solid #d1d5db;
+        border: 1px solid var(--borde);
         border-radius: 0.375rem;
         font: inherit;
         resize: vertical;
@@ -173,13 +173,13 @@ h3 {
     padding: 0;
     border: 0;
     background: none;
-    color: #d1d5db;
+    color: var(--borde);
     font-size: 1.5rem;
     line-height: 1;
     cursor: pointer;
 
     &.activa {
-        color: #f59e0b;
+        color: var(--vip);
     }
 }
 
@@ -192,16 +192,16 @@ h3 {
         padding: 0.45rem 1rem;
         border: 0;
         border-radius: 0.375rem;
-        background: #111827;
-        color: #fff;
+        background: var(--tinta);
+        color: var(--superficie);
         font: inherit;
         font-size: 0.87rem;
         cursor: pointer;
 
         &.borrar {
-            background: #fff;
-            border: 1px solid #fca5a5;
-            color: #b91c1c;
+            background: var(--superficie);
+            border: 1px solid var(--error-borde);
+            color: var(--error);
         }
 
         &:disabled {
@@ -212,7 +212,7 @@ h3 {
 
 .resena {
     padding: 0.75rem 0;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--superficie-2);
 
     header {
         display: flex;
@@ -223,16 +223,16 @@ h3 {
 
     .puntaje {
         margin: 0;
-        color: #f59e0b;
+        color: var(--vip);
         font-size: 0.85rem;
 
         .apagada {
-            color: #e5e7eb;
+            color: var(--borde-2);
         }
     }
 
     .fecha {
-        color: #9ca3af;
+        color: var(--texto-4);
         font-size: 0.75rem;
     }
 

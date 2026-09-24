@@ -11,7 +11,7 @@ h1 {
     input {
         flex: 1 1 18rem;
         padding: 0.6rem 0.8rem;
-        border: 1px solid #d1d5db;
+        border: 1px solid var(--borde);
         border-radius: 0.4rem;
         font: inherit;
         font-family: ui-monospace, monospace;
@@ -21,36 +21,36 @@ h1 {
         padding: 0.6rem 1.1rem;
         border: 0;
         border-radius: 0.4rem;
-        background: #111827;
-        color: #fff;
+        background: var(--tinta);
+        color: var(--superficie);
         font: inherit;
         cursor: pointer;
 
         &.secundario {
-            background: #e5e7eb;
-            color: #1f2937;
+            background: var(--borde-2);
+            color: var(--tinta-2);
         }
     }
 }
 
 .ayuda {
     margin: 0.6rem 0 1.25rem;
-    color: #6b7280;
+    color: var(--texto-3);
     font-size: 0.82rem;
 }
 
 .resultado {
     padding: 1.1rem 1.25rem;
-    border: 2px solid #10b981;
+    border: 2px solid var(--ok);
     border-radius: 0.6rem;
-    background: #fff;
+    background: var(--superficie);
 
     &.usada {
-        border-color: #f59e0b;
+        border-color: var(--vip);
     }
 
     &.anulada {
-        border-color: #dc2626;
+        border-color: var(--error);
     }
 
     header {
@@ -74,24 +74,24 @@ h1 {
     text-transform: uppercase;
 
     &.valida {
-        background: #dcfce7;
-        color: #166534;
+        background: var(--ok-suave);
+        color: var(--ok-2);
     }
 
     &.usada {
-        background: #fef3c7;
-        color: #92400e;
+        background: var(--vip-suave);
+        color: var(--alerta);
     }
 
     &.anulada {
-        background: #fee2e2;
-        color: #991b1b;
+        background: var(--acento-suave);
+        color: var(--acento-2);
     }
 }
 
 .meta {
     margin: 0.3rem 0 1rem;
-    color: #6b7280;
+    color: var(--texto-3);
     font-size: 0.85rem;
 }
 
@@ -103,15 +103,15 @@ table {
     th {
         text-align: left;
         padding: 0.3rem 0.5rem;
-        border-bottom: 1px solid #e5e7eb;
-        color: #6b7280;
+        border-bottom: 1px solid var(--borde-2);
+        color: var(--texto-3);
         font-weight: 500;
         font-size: 0.78rem;
     }
 
     td {
         padding: 0.35rem 0.5rem;
-        border-bottom: 1px solid #f3f4f6;
+        border-bottom: 1px solid var(--superficie-2);
         text-transform: capitalize;
     }
 }
@@ -125,8 +125,8 @@ table {
     margin: 0.75rem 0 0;
     padding: 0.5rem 0.75rem;
     border-radius: 0.4rem;
-    background: #fef3c7;
-    color: #92400e;
+    background: var(--vip-suave);
+    color: var(--alerta);
     font-size: 0.82rem;
 }
 
@@ -140,7 +140,7 @@ table {
 h3 {
     margin: 1.1rem 0 0.4rem;
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--texto-3);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -148,10 +148,10 @@ h3 {
 
 .candy {
     padding: 0.65rem 1.3rem;
-    border: 1px solid #d97706;
+    border: 1px solid var(--vip);
     border-radius: 0.4rem;
-    background: #fff;
-    color: #92400e;
+    background: var(--superficie);
+    color: var(--alerta);
     font: inherit;
     font-weight: 600;
     cursor: pointer;
@@ -165,8 +165,8 @@ h3 {
     padding: 0.65rem 1.3rem;
     border: 0;
     border-radius: 0.4rem;
-    background: #059669;
-    color: #fff;
+    background: var(--ok);
+    color: var(--superficie);
     font: inherit;
     font-weight: 600;
     cursor: pointer;
@@ -179,11 +179,11 @@ h3 {
 .ok {
     padding: 0.6rem 0.85rem;
     border-radius: 0.5rem;
-    background: #dcfce7;
-    color: #166534;
+    background: var(--ok-suave);
+    color: var(--ok-2);
     font-size: 0.87rem;
 }
 
 .error {
-    color: #b91c1c;
+    color: var(--error);
 }

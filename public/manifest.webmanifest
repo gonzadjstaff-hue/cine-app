@@ -1,6 +1,6 @@
 {
-  "name": "cine-app",
-  "short_name": "cine-app",
+  "name": "CineApp - Entradas de cine",
+  "short_name": "CineApp",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
@@ -53,5 +53,9 @@
       "type": "image/png",
       "purpose": "maskable any"
     }
-  ]
+  ],
+  "description": "Compra de entradas, candy bar y validacion de QR",
+  "theme_color": "#17141f",
+  "background_color": "#f7f4f9",
+  "lang": "es-AR"
 }
