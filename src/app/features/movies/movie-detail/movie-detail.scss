@@ -134,3 +134,111 @@ h3 {
         flex-direction: column;
     }
 }
+
+.puntaje {
+    margin-left: 0.5rem;
+    color: #b45309;
+    font-weight: 600;
+}
+
+.resenas {
+    margin-top: 2.25rem;
+}
+
+.mi-resena {
+    padding: 1rem 1.15rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.55rem;
+    background: #fff;
+
+    .titulo {
+        margin: 0 0 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    textarea {
+        width: 100%;
+        margin-top: 0.6rem;
+        padding: 0.5rem 0.7rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        font: inherit;
+        resize: vertical;
+    }
+}
+
+.estrellas button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #d1d5db;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+
+    &.activa {
+        color: #f59e0b;
+    }
+}
+
+.acciones {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.7rem;
+
+    button {
+        padding: 0.45rem 1rem;
+        border: 0;
+        border-radius: 0.375rem;
+        background: #111827;
+        color: #fff;
+        font: inherit;
+        font-size: 0.87rem;
+        cursor: pointer;
+
+        &.borrar {
+            background: #fff;
+            border: 1px solid #fca5a5;
+            color: #b91c1c;
+        }
+
+        &:disabled {
+            opacity: 0.6;
+        }
+    }
+}
+
+.resena {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f3f4f6;
+
+    header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .puntaje {
+        margin: 0;
+        color: #f59e0b;
+        font-size: 0.85rem;
+
+        .apagada {
+            color: #e5e7eb;
+        }
+    }
+
+    .fecha {
+        color: #9ca3af;
+        font-size: 0.75rem;
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }
+}

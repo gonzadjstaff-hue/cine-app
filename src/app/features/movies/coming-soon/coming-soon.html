@@ -1,0 +1,58 @@
+<h1>Próximamente</h1>
+<p class="bajada">Estrenos de las próximas semanas. Activá la alerta y te avisamos cuando se habilite la venta.</p>
+
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+@if (cargando()) {
+<p class="aviso">Cargando...</p>
+} @else {
+<div class="grilla">
+    @for (p of peliculas(); track p.id) {
+    <article class="tarjeta">
+        <div class="poster">
+            @if (p.poster_url) {
+            <img [src]="p.poster_url" [alt]="p.titulo" />
+            } @else {
+            <span>{{ p.titulo.charAt(0) }}</span>
+            }
+        </div>
+
+        <div class="datos">
+            <h2>{{ p.titulo }}</h2>
+            <p class="meta">
+                <span class="edad">{{ etiquetaEdad(p.clasificacion) }}</span>
+                Estreno {{ estreno(p.fecha_estreno) }}
+            </p>
+
+            @if (p.generos.length) {
+            <ul class="generos">
+                @for (g of p.generos; track g.id) {
+                <li>{{ g.nombre }}</li>
+                }
+            </ul>
+            }
+
+            <p class="sinopsis">{{ p.sinopsis }}</p>
+
+            @if (auth.autenticado()) {
+            <button
+                type="button"
+                class="alerta"
+                [class.activa]="tieneAlerta(p.id)"
+                (click)="alternar(p.id)">
+                {{ tieneAlerta(p.id) ? 'Alerta activada' : 'Avisarme cuando salga a la venta' }}
+            </button>
+            } @else {
+            <p class="aviso">
+                <a routerLink="/ingresar">Ingresá</a> para activar la alerta de estreno.
+            </p>
+            }
+        </div>
+    </article>
+    } @empty {
+    <p class="aviso">No hay estrenos anunciados por ahora.</p>
+    }
+</div>
+}

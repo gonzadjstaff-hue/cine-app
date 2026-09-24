@@ -1,0 +1,115 @@
+h1 {
+    margin: 0 0 0.3rem;
+    font-size: 1.4rem;
+}
+
+.bajada {
+    margin: 0 0 1.5rem;
+    color: #6b7280;
+    font-size: 0.87rem;
+}
+
+.grilla {
+    display: grid;
+    gap: 1rem;
+}
+
+.tarjeta {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.625rem;
+    background: #fff;
+}
+
+.poster {
+    flex: 0 0 5rem;
+    height: 7.5rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.375rem;
+    background: #1f2937;
+    color: #fff;
+    font-size: 2rem;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.datos {
+    flex: 1;
+}
+
+h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.05rem;
+}
+
+.meta {
+    margin: 0 0 0.5rem;
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+.edad {
+    display: inline-block;
+    margin-right: 0.5rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.25rem;
+    background: #fee2e2;
+    color: #991b1b;
+    font-weight: 600;
+}
+
+.generos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 0 0 0.5rem;
+    padding: 0;
+    list-style: none;
+
+    li {
+        padding: 0.1rem 0.5rem;
+        border-radius: 999px;
+        background: #f3f4f6;
+        font-size: 0.75rem;
+    }
+}
+
+.sinopsis {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+.alerta {
+    padding: 0.45rem 0.9rem;
+    border: 1px solid #111827;
+    border-radius: 0.375rem;
+    background: #fff;
+    color: #111827;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+
+    &.activa {
+        background: #111827;
+        color: #fff;
+    }
+}
+
+.aviso {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+.error {
+    color: #b91c1c;
+}

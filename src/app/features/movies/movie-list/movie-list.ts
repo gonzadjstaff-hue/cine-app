@@ -14,6 +14,7 @@ export class MovieList {
   private readonly moviesService = inject(MoviesService);
 
   protected readonly peliculas = signal<Movie[]>([]);
+  protected readonly masVendidas = signal<Movie[]>([]);
   protected readonly generos = signal<Genre[]>([]);
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
@@ -27,7 +28,12 @@ export class MovieList {
 
   private async inicializar(): Promise<void> {
     try {
-      this.generos.set(await this.moviesService.listarGeneros());
+      const [generos, top] = await Promise.all([
+        this.moviesService.listarGeneros(),
+        this.moviesService.masVendidas(3)
+      ]);
+      this.generos.set(generos);
+      this.masVendidas.set(top);
     } catch (e) {
       this.error.set((e as Error).message);
     }

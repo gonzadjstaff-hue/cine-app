@@ -19,6 +19,11 @@
         <p class="meta">
             <span class="edad">{{ etiquetaEdad(p.clasificacion) }}</span>
             {{ duracion(p.duracion_min) }}
+            @if (resumen().promedio !== null) {
+            <span class="puntaje">
+                &#9733; {{ resumen().promedio }} ({{ resumen().cantidad }})
+            </span>
+            }
         </p>
 
         @if (p.generos.length) {
@@ -56,4 +61,64 @@
 } @empty {
 <p class="aviso">No hay funciones programadas por el momento.</p>
 }
+
+<section class="resenas">
+    <h2>Reseñas</h2>
+
+    @if (auth.autenticado()) {
+    <div class="mi-resena">
+        <p class="titulo">{{ miResena() ? 'Tu reseña' : 'Dejá tu reseña' }}</p>
+
+        <div class="estrellas">
+            @for (e of estrellas; track e) {
+            <button
+                type="button"
+                [class.activa]="e <= miPuntaje"
+                [attr.aria-label]="e + ' estrellas'"
+                (click)="elegirPuntaje(e)">
+                &#9733;
+            </button>
+            }
+        </div>
+
+        <textarea
+            rows="3"
+            maxlength="280"
+            placeholder="Un comentario corto (opcional)"
+            [(ngModel)]="miComentario"></textarea>
+
+        <div class="acciones">
+            <button type="button" [disabled]="guardando()" (click)="guardarResena()">
+                {{ guardando() ? 'Guardando...' : 'Publicar' }}
+            </button>
+            @if (miResena()) {
+            <button type="button" class="borrar" (click)="borrarResena()">Borrar</button>
+            }
+        </div>
+    </div>
+    } @else {
+    <p class="aviso">
+        <a routerLink="/ingresar">Ingresá</a> para dejar tu reseña.
+    </p>
+    }
+
+    @for (r of resenas(); track r.id) {
+    <article class="resena">
+        <header>
+            <strong>{{ r.autor }}</strong>
+            <span class="puntaje">
+                @for (e of estrellas; track e) {
+                <span [class.apagada]="e > r.estrellas">&#9733;</span>
+                }
+            </span>
+            <span class="fecha">{{ fechaCorta(r.fecha) }}</span>
+        </header>
+        @if (r.comentario) {
+        <p>{{ r.comentario }}</p>
+        }
+    </article>
+    } @empty {
+    <p class="aviso">Todavía no hay reseñas de esta película.</p>
+    }
+</section>
 }

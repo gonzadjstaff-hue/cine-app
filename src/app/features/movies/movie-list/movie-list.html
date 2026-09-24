@@ -1,3 +1,27 @@
+@if (masVendidas().length) {
+<section class="top">
+    <h2>Las más vendidas</h2>
+    <div class="podio">
+        @for (p of masVendidas(); track p.id; let i = $index) {
+        <a class="puesto" [routerLink]="['/pelicula', p.id]">
+            <span class="numero">{{ i + 1 }}</span>
+            <div class="mini">
+                @if (p.poster_url) {
+                <img [src]="p.poster_url" [alt]="p.titulo" />
+                } @else {
+                <span>{{ p.titulo.charAt(0) }}</span>
+                }
+            </div>
+            <div>
+                <strong>{{ p.titulo }}</strong>
+                <span class="chico">{{ etiquetaEdad(p.clasificacion) }} · {{ duracion(p.duracion_min) }}</span>
+            </div>
+        </a>
+        }
+    </div>
+</section>
+}
+
 <section class="filtros">
     <input type="search" placeholder="Buscar película" [(ngModel)]="texto" (keyup.enter)="buscar()" />
 

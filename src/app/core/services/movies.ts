@@ -164,4 +164,99 @@ export class MoviesService {
             generos: fila['genres'] ?? []
         } as unknown as Movie;
     }
+
+    async masVendidas(limite = 3): Promise<Movie[]> {
+        const { data, error } = await this.supabase.client.rpc(
+            'peliculas_mas_vendidas',
+            { p_limite: limite }
+        );
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        const ranking = (data ?? []) as { movie_id: string; vendidas: number }[];
+
+        if (ranking.length === 0) {
+            return [];
+        }
+
+        const ids = ranking.map((r) => r.movie_id);
+
+        const { data: peliculas, error: errorPeliculas } = await this.supabase.client
+            .from('movies')
+            .select(CAMPOS_MOVIE)
+            .in('id', ids)
+            .eq('estado', 'cartelera');
+
+        if (errorPeliculas) {
+            throw new Error(errorPeliculas.message);
+        }
+
+        const mapa = new Map(
+            (peliculas ?? []).map((fila) => {
+                const f = fila as Record<string, unknown>;
+                return [
+                    f['id'] as string,
+                    { ...f, generos: f['genres'] ?? [] } as unknown as Movie
+                ];
+            })
+        );
+
+        return ids
+            .map((id) => mapa.get(id))
+            .filter((p): p is Movie => p !== undefined);
+    }
+
+    async listarProximamente(): Promise<Movie[]> {
+        const { data, error } = await this.supabase.client
+            .from('movies')
+            .select(CAMPOS_MOVIE)
+            .eq('estado', 'proximamente')
+            .order('fecha_estreno');
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        return (data ?? []).map((fila) => {
+            const f = fila as Record<string, unknown>;
+            return { ...f, generos: f['genres'] ?? [] } as unknown as Movie;
+        });
+    }
+
+    async alertasDe(userId: string): Promise<string[]> {
+        const { data, error } = await this.supabase.client
+            .from('release_alerts')
+            .select('movie_id')
+            .eq('user_id', userId);
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        return (data ?? []).map((f) => (f as { movie_id: string }).movie_id);
+    }
+
+    async alternarAlerta(
+        movieId: string,
+        userId: string,
+        activar: boolean
+    ): Promise<void> {
+        const consulta = activar
+            ? this.supabase.client
+                  .from('release_alerts')
+                  .insert({ movie_id: movieId, user_id: userId })
+            : this.supabase.client
+                  .from('release_alerts')
+                  .delete()
+                  .eq('movie_id', movieId)
+                  .eq('user_id', userId);
+
+        const { error } = await consulta;
+
+        if (error) {
+            throw new Error(error.message);
+        }
+    }
 }

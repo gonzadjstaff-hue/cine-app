@@ -11,6 +11,12 @@ export const routes: Routes = [
             import('./features/movies/movie-list/movie-list').then((m) => m.MovieList)
     },
     {
+        path: 'proximamente',
+        title: 'Próximamente',
+        loadComponent: () =>
+            import('./features/movies/coming-soon/coming-soon').then((m) => m.ComingSoon)
+    },
+    {
         path: 'pelicula/:id',
         title: 'Película',
         loadComponent: () =>
