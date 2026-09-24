@@ -10,11 +10,11 @@
 
 <div class="columnas">
     <section class="panel">
-        <h2>Nueva programaci\u00f3n</h2>
+        <h2>Nueva programación</h2>
 
         <form [formGroup]="formulario" (ngSubmit)="programar()">
             <label>
-                Pel\u00edcula
+                Película
                 <select formControlName="movieId">
                     <option value="">Elegir</option>
                     @for (p of peliculas(); track p.id) {
@@ -76,7 +76,7 @@
 
     <section class="listado">
         <div class="encabezado">
-            <h2>Funciones del d\u00eda</h2>
+            <h2>Funciones del día</h2>
             <input
                 type="date"
                 [value]="fechaListado()"
@@ -86,9 +86,9 @@
         @for (f of funciones(); track f.id) {
         <article>
             <div>
-                <strong>{{ hora(f.inicio) }} \u00b7 {{ f.pelicula }}</strong>
+                <strong>{{ hora(f.inicio) }} · {{ f.pelicula }}</strong>
                 <span class="meta">
-                    {{ f.sala }} \u00b7 {{ f.formato }} \u00b7 {{ f.idioma }} \u00b7 termina {{ hora(f.fin) }}
+                    {{ f.sala }} · {{ f.formato }} · {{ f.idioma }} · termina {{ hora(f.fin) }}
                 </span>
             </div>
             <button type="button" class="peligro" (click)="eliminar(f)">Borrar</button>
