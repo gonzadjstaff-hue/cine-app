@@ -208,6 +208,30 @@ export class BookingService {
         return Number((data as { valor: unknown } | null)?.valor ?? 8);
     }
 
+    async validarCupon(
+        codigo: string,
+        subtotal: number
+    ): Promise<{ descuento: number; descuentoPct: number }> {
+        const { data, error } = await this.supabase.client.rpc('validar_cupon', {
+            p_codigo: codigo,
+            p_subtotal: subtotal
+        });
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        const fila = ((data ?? []) as {
+            descuento: number;
+            descuento_pct: number;
+        }[])[0];
+
+        return {
+            descuento: Number(fila?.descuento ?? 0),
+            descuentoPct: Number(fila?.descuento_pct ?? 0)
+        };
+    }
+
     async comprar(
         showtimeId: string,
         butacas: { id: string; precio: number }[],

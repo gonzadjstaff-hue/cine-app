@@ -53,6 +53,8 @@ export class SeatSelection implements OnInit, OnDestroy {
     protected readonly mostrarCandy = signal(false);
     protected codigoCupon = '';
     protected usarCredito = false;
+    protected readonly descuentoCupon = signal(0);
+    protected readonly verificandoCupon = signal(false);
 
     ngOnInit(): void {
         this.cargar();
@@ -305,11 +307,67 @@ export class SeatSelection implements OnInit, OnDestroy {
         });
     }
 
+    protected async aplicarCupon(): Promise<void> {
+        const codigo = this.codigoCupon.trim();
+
+        this.error.set(null);
+        this.descuentoCupon.set(0);
+
+        if (!codigo) {
+            return;
+        }
+
+        this.verificandoCupon.set(true);
+
+        try {
+            const { descuento } = await this.booking.validarCupon(codigo, this.total());
+            this.descuentoCupon.set(descuento);
+        } catch (e) {
+            this.error.set((e as Error).message);
+            this.codigoCupon = '';
+        } finally {
+            this.verificandoCupon.set(false);
+        }
+    }
+
+    protected totalConDescuento(): number {
+        return Math.max(this.total() - this.descuentoCupon(), 0);
+    }
+
+    private async reponerBloqueos(): Promise<void> {
+        const funcion = this.funcion();
+
+        if (!funcion) {
+            return;
+        }
+
+        for (const butaca of this.seleccion()) {
+            await this.booking.bloquear(
+                funcion.id,
+                butaca.id,
+                this.sessionId,
+                this.auth.perfil()?.id ?? null,
+                this.minutosBloqueo
+            );
+        }
+    }
+
     protected async confirmar(): Promise<void> {
         const funcion = this.funcion();
 
         if (!funcion || this.seleccion().length === 0) {
             return;
+        }
+
+        const codigo = this.codigoCupon.trim();
+
+        if (codigo) {
+            try {
+                await this.booking.validarCupon(codigo, this.total());
+            } catch (e) {
+                this.error.set((e as Error).message);
+                return;
+            }
         }
 
         const email = this.auth.perfil()?.email ?? 'anonimo@cineapp.local';
@@ -335,10 +393,12 @@ export class SeatSelection implements OnInit, OnDestroy {
             this.mostrarCandy.set(false);
             this.codigoCupon = '';
             this.usarCredito = false;
+            this.descuentoCupon.set(0);
             await this.auth.refrescarPerfil();
             await this.refrescarEstado();
         } catch (e) {
             this.error.set((e as Error).message);
+            await this.reponerBloqueos();
             await this.refrescarEstado();
         } finally {
             this.comprando.set(false);
@@ -370,6 +430,6 @@ export class SeatSelection implements OnInit, OnDestroy {
     }
 
     protected creditoAplicable(): number {
-        return Math.min(this.creditoDisponible(), this.total());
+        return Math.min(this.creditoDisponible(), this.totalConDescuento());
     }
 }

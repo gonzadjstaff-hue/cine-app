@@ -144,13 +144,35 @@
 <section class="beneficios">
     <label class="cupon">
         Cupón de descuento
-        <input type="text" placeholder="BIENVENIDO" [(ngModel)]="codigoCupon" />
+        <span class="campo">
+            <input
+                type="text"
+                placeholder="BIENVENIDO"
+                [(ngModel)]="codigoCupon"
+                (keyup.enter)="aplicarCupon()" />
+            <button type="button" [disabled]="verificandoCupon()" (click)="aplicarCupon()">
+                {{ verificandoCupon() ? '...' : 'Aplicar' }}
+            </button>
+        </span>
+        @if (descuentoCupon() > 0) {
+        <em class="ok-cupon">
+            Descuento de {{ descuentoCupon() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+        </em>
+        }
     </label>
 
-    @if (creditoAplicable() > 0) {
+    @if (creditoDisponible() > 0) {
     <label class="credito">
         <input type="checkbox" [(ngModel)]="usarCredito" />
-        Usar mi crédito ({{ creditoAplicable() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }} disponible)
+        <span>
+            Usar mi crédito
+            <em>
+                Saldo {{ creditoDisponible() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+                @if (usarCredito) {
+                · se aplican {{ creditoAplicable() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+                }
+            </em>
+        </span>
     </label>
     }
 </section>
@@ -175,7 +197,14 @@
     </div>
 
     <div class="cierre">
-        <strong class="total">{{ total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+        <span class="importes">
+            @if (descuentoCupon() > 0) {
+            <s class="tachado">{{ total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</s>
+            }
+            <strong class="total">
+                {{ totalConDescuento() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+            </strong>
+        </span>
         <button type="button" [disabled]="comprando()" (click)="confirmar()">
             {{ comprando() ? 'Procesando...' : 'Confirmar compra' }}
         </button>

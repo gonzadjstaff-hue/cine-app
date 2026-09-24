@@ -433,12 +433,66 @@ h1 {
 
 .credito {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.45rem;
     font-size: 0.85rem;
     color: var(--texto-2);
+
+    span {
+        display: flex;
+        flex-direction: column;
+    }
+
+    em {
+        color: var(--texto-3);
+        font-style: normal;
+        font-size: 0.75rem;
+    }
 }
 
 .puntos {
     font-weight: 600;
+}
+
+.cupon .campo {
+    display: flex;
+    gap: 0.35rem;
+
+    input {
+        flex: 1;
+        min-width: 0;
+    }
+
+    button {
+        padding: 0.45rem 0.8rem;
+        border: 1px solid var(--borde);
+        border-radius: 0.4rem;
+        background: var(--superficie-2);
+        font: inherit;
+        font-size: 0.82rem;
+        cursor: pointer;
+
+        &:disabled {
+            opacity: 0.6;
+        }
+    }
+}
+
+.ok-cupon {
+    margin-top: 0.25rem;
+    color: var(--ok-2);
+    font-style: normal;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.importes {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.tachado {
+    color: var(--texto-4);
+    font-size: 0.85rem;
 }
