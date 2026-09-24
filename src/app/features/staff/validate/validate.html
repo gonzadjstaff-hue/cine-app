@@ -64,10 +64,40 @@
     </p>
     }
 
-    @if (puedeIngresar(e)) {
-    <button type="button" class="canjear" [disabled]="canjeando()" (click)="canjear()">
-        {{ canjeando() ? 'Validando...' : 'Marcar ingreso' }}
-    </button>
+    @if (e.productos.length) {
+    <h3>Candy bar</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (p of e.productos; track p.nombre) {
+            <tr>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.cantidad }}</td>
+                <td>{{ p.canjeado ? 'Entregado' : 'Pendiente' }}</td>
+            </tr>
+            }
+        </tbody>
+    </table>
     }
+
+    <div class="acciones">
+        @if (puedeIngresar(e)) {
+        <button type="button" class="canjear" [disabled]="canjeando()" (click)="canjear()">
+            {{ canjeando() ? 'Validando...' : 'Marcar ingreso a la sala' }}
+        </button>
+        }
+
+        @if (candyPendiente(e)) {
+        <button type="button" class="candy" [disabled]="canjeando()" (click)="entregarCandy()">
+            Entregar candy
+        </button>
+        }
+    </div>
 </article>
 }

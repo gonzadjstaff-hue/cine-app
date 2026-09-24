@@ -7,6 +7,7 @@ import {
     ResultadoCompra,
     Seat
 } from '../models/booking';
+import { ItemDeCompra } from '../models/candy';
 
 function primero<T>(valor: T | T[] | null | undefined): T | null {
     if (valor === null || valor === undefined) {
@@ -210,11 +211,17 @@ export class BookingService {
     async comprar(
         showtimeId: string,
         butacas: { id: string; precio: number }[],
+        items: ItemDeCompra[],
         userId: string | null,
         email: string,
         sessionId: string
     ): Promise<ResultadoCompra> {
-        const total = butacas.reduce((acc, b) => acc + b.precio, 0);
+        const totalButacas = butacas.reduce((acc, b) => acc + b.precio, 0);
+        const totalItems = items.reduce(
+            (acc, i) => acc + i.precioUnit * i.cantidad,
+            0
+        );
+        const total = totalButacas + totalItems;
 
         const { data: orden, error: errorOrden } = await this.supabase.client
             .from('orders')
@@ -251,6 +258,24 @@ export class BookingService {
             throw new Error(
                 'Alguna de las butacas fue tomada por otra persona. Eleg\u00ed otras.'
             );
+        }
+
+        if (items.length) {
+            const { error: errorItems } = await this.supabase.client
+                .from('order_products')
+                .insert(
+                    items.map((i) => ({
+                        order_id: id,
+                        product_id: i.productId,
+                        combo_id: i.comboId,
+                        cantidad: i.cantidad,
+                        precio_unit: i.precioUnit
+                    }))
+                );
+
+            if (errorItems) {
+                throw new Error(errorItems.message);
+            }
         }
 
         await this.liberarTodas(showtimeId, sessionId);

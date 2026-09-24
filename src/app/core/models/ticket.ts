@@ -6,6 +6,13 @@ export interface EntradaButaca {
     canjeada: boolean;
 }
 
+export interface EntradaProducto {
+    nombre: string;
+    cantidad: number;
+    precioUnit: number;
+    canjeado: boolean;
+}
+
 export interface EntradaCompleta {
     orderId: string;
     qr: string;
@@ -20,4 +27,5 @@ export interface EntradaCompleta {
     formato: string;
     idioma: string;
     butacas: EntradaButaca[];
+    productos: EntradaProducto[];
 }

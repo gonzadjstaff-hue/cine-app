@@ -15,6 +15,9 @@
             {{ fecha(c.inicio) }} · {{ c.sala }} · {{ c.formato }}
         </span>
         <span class="meta">Butacas {{ butacas(c) }}</span>
+        @if (c.productos.length) {
+        <span class="meta">Candy: {{ candy(c) }}</span>
+        }
         @if (c.estado === 'cancelada') {
         <span class="cancelada">Cancelada</span>
         }

@@ -63,6 +63,35 @@ export class Validate {
         return entrada.estado === 'pagada' && !this.todasCanjeadas(entrada);
     }
 
+    protected candyPendiente(entrada: EntradaCompleta): boolean {
+        return (
+            entrada.estado === 'pagada' &&
+            entrada.productos.some((p) => !p.canjeado)
+        );
+    }
+
+    protected async entregarCandy(): Promise<void> {
+        const entrada = this.entrada();
+        const empleado = this.auth.perfil()?.id;
+
+        if (!entrada || !empleado) {
+            return;
+        }
+
+        this.canjeando.set(true);
+        this.error.set(null);
+
+        try {
+            await this.ticketsService.canjearProductos(entrada.orderId, empleado);
+            this.entrada.set(await this.ticketsService.porId(entrada.orderId));
+            this.aviso.set('Candy entregado.');
+        } catch (e) {
+            this.error.set((e as Error).message);
+        } finally {
+            this.canjeando.set(false);
+        }
+    }
+
     protected fecha(iso: string): string {
         return new Date(iso).toLocaleString('es-AR', {
             weekday: 'short',

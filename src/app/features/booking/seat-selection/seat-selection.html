@@ -77,6 +77,61 @@
 </div>
 
 @if (seleccion().length) {
+
+<section class="candy">
+    <button type="button" class="titulo" (click)="alternarCandy()">
+        <span>Candy bar</span>
+        <em>{{ mostrarCandy() ? 'Ocultar' : 'Agregar algo para ver la pelicula' }}</em>
+    </button>
+
+    @if (mostrarCandy()) {
+    <div class="catalogo">
+        @if (combos().length) {
+        <h3>Combos</h3>
+        <div class="items">
+            @for (c of combos(); track c.id) {
+            <article class="item" [class.destacado]="c.destacado">
+                <div>
+                    <strong>{{ c.nombre }}</strong>
+                    @if (c.destacado) {
+                    <span class="badge">Destacado</span>
+                    }
+                    <span class="desc">{{ c.descripcion }}</span>
+                    <span class="precio">{{ c.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+                </div>
+                <div class="stepper">
+                    <button type="button" (click)="sumar(null, c.id, c.nombre, c.precio, -1)">-</button>
+                    <span>{{ cantidadDe(null, c.id) }}</span>
+                    <button type="button" (click)="sumar(null, c.id, c.nombre, c.precio, 1)">+</button>
+                </div>
+            </article>
+            }
+        </div>
+        }
+
+        @for (cat of categorias(); track cat) {
+        <h3>{{ cat }}</h3>
+        <div class="items">
+            @for (p of productosDe(cat); track p.id) {
+            <article class="item">
+                <div>
+                    <strong>{{ p.nombre }}</strong>
+                    <span class="desc">{{ p.descripcion }}</span>
+                    <span class="precio">{{ p.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+                </div>
+                <div class="stepper">
+                    <button type="button" (click)="sumar(p.id, null, p.nombre, p.precio, -1)">-</button>
+                    <span>{{ cantidadDe(p.id, null) }}</span>
+                    <button type="button" (click)="sumar(p.id, null, p.nombre, p.precio, 1)">+</button>
+                </div>
+            </article>
+            }
+        </div>
+        }
+    </div>
+    }
+</section>
+
 <aside class="resumen">
     <div>
         <strong>{{ seleccion().length }} butacas:</strong>
@@ -85,6 +140,14 @@
         }
         @if (hayVip()) {
         <em class="vip-aviso">Incluye butacas VIP, con precio diferencial.</em>
+        }
+        @if (carrito().length) {
+        <em class="candy-aviso">
+            Candy:
+            @for (i of carrito(); track i.nombre) {
+            <span class="tag">{{ i.cantidad }}x {{ i.nombre }}</span>
+            }
+        </em>
         }
     </div>
 

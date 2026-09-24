@@ -47,6 +47,10 @@ export class MyOrders implements OnInit {
         return entrada.butacas.map((b) => `${b.fila}${b.numero}`).join(', ');
     }
 
+    protected candy(entrada: EntradaCompleta): string {
+        return entrada.productos.map((p) => `${p.cantidad}x ${p.nombre}`).join(', ');
+    }
+
     protected async descargar(entrada: EntradaCompleta): Promise<void> {
         this.error.set(null);
 

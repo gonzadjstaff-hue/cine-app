@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { BookingService } from '../../../core/services/booking';
 import { TicketsService } from '../../../core/services/tickets';
+import { ProductsService } from '../../../core/services/products';
+import { Combo, ItemDeCompra, Producto } from '../../../core/models/candy';
 import { AuthService } from '../../../core/services/auth';
 import {
     ButacaEnMapa,
@@ -25,6 +27,7 @@ export class SeatSelection implements OnInit, OnDestroy {
     private readonly booking = inject(BookingService);
     protected readonly auth = inject(AuthService);
     private readonly tickets = inject(TicketsService);
+    private readonly products = inject(ProductsService);
 
     private readonly sessionId = crypto.randomUUID();
     private butacas: Seat[] = [];
@@ -43,6 +46,10 @@ export class SeatSelection implements OnInit, OnDestroy {
     protected readonly compra = signal<ResultadoCompra | null>(null);
     protected readonly bloqueoEdad = signal<string | null>(null);
     protected readonly descargando = signal(false);
+    protected readonly productos = signal<Producto[]>([]);
+    protected readonly combos = signal<Combo[]>([]);
+    protected readonly carrito = signal<ItemDeCompra[]>([]);
+    protected readonly mostrarCandy = signal(false);
 
     ngOnInit(): void {
         this.cargar();
@@ -68,11 +75,19 @@ export class SeatSelection implements OnInit, OnDestroy {
             this.funcion.set(funcion);
             this.verificarEdad(funcion);
 
-            [this.butacas, this.recargoVip, this.minutosBloqueo] = await Promise.all([
+            const [butacas, recargo, minutos, productos, combos] = await Promise.all([
                 this.booking.butacasDeSala(funcion.roomId),
                 this.booking.recargoVip(),
-                this.booking.minutosBloqueo()
+                this.booking.minutosBloqueo(),
+                this.products.listarProductos(),
+                this.products.listarCombos()
             ]);
+
+            this.butacas = butacas;
+            this.recargoVip = recargo;
+            this.minutosBloqueo = minutos;
+            this.productos.set(productos);
+            this.combos.set(combos);
 
             await this.refrescarEstado();
 
@@ -203,8 +218,70 @@ export class SeatSelection implements OnInit, OnDestroy {
         await this.refrescarEstado();
     }
 
-    protected total(): number {
+    protected totalButacas(): number {
         return this.seleccion().reduce((acc, b) => acc + b.precio, 0);
+    }
+
+    protected totalCandy(): number {
+        return this.carrito().reduce((acc, i) => acc + i.precioUnit * i.cantidad, 0);
+    }
+
+    protected total(): number {
+        return this.totalButacas() + this.totalCandy();
+    }
+
+    protected categorias(): string[] {
+        return [...new Set(this.productos().map((p) => p.categoria))];
+    }
+
+    protected productosDe(categoria: string): Producto[] {
+        return this.productos().filter((p) => p.categoria === categoria);
+    }
+
+    protected cantidadDe(productId: string | null, comboId: string | null): number {
+        return (
+            this.carrito().find(
+                (i) => i.productId === productId && i.comboId === comboId
+            )?.cantidad ?? 0
+        );
+    }
+
+    protected sumar(
+        productId: string | null,
+        comboId: string | null,
+        nombre: string,
+        precioUnit: number,
+        delta: number
+    ): void {
+        const actual = this.carrito();
+        const indice = actual.findIndex(
+            (i) => i.productId === productId && i.comboId === comboId
+        );
+
+        if (indice === -1) {
+            if (delta > 0) {
+                this.carrito.set([
+                    ...actual,
+                    { productId, comboId, nombre, precioUnit, cantidad: delta }
+                ]);
+            }
+            return;
+        }
+
+        const cantidad = actual[indice].cantidad + delta;
+
+        if (cantidad <= 0) {
+            this.carrito.set(actual.filter((_, i) => i !== indice));
+            return;
+        }
+
+        this.carrito.set(
+            actual.map((item, i) => (i === indice ? { ...item, cantidad } : item))
+        );
+    }
+
+    protected alternarCandy(): void {
+        this.mostrarCandy.set(!this.mostrarCandy());
     }
 
     protected hayVip(): boolean {
@@ -241,6 +318,7 @@ export class SeatSelection implements OnInit, OnDestroy {
             const resultado = await this.booking.comprar(
                 funcion.id,
                 this.seleccion().map((b) => ({ id: b.id, precio: b.precio })),
+                this.carrito(),
                 this.auth.perfil()?.id ?? null,
                 email,
                 this.sessionId
@@ -248,6 +326,8 @@ export class SeatSelection implements OnInit, OnDestroy {
 
             this.compra.set(resultado);
             this.seleccion.set([]);
+            this.carrito.set([]);
+            this.mostrarCandy.set(false);
             await this.refrescarEstado();
         } catch (e) {
             this.error.set((e as Error).message);

@@ -279,3 +279,125 @@ h1 {
         opacity: 0.6;
     }
 }
+
+.candy {
+    margin: 1.25rem 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.6rem;
+    background: #fff;
+    overflow: hidden;
+}
+
+.candy .titulo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 0;
+    background: #f9fafb;
+    font: inherit;
+    cursor: pointer;
+
+    span {
+        font-weight: 600;
+    }
+
+    em {
+        color: #6b7280;
+        font-style: normal;
+        font-size: 0.82rem;
+    }
+}
+
+.catalogo {
+    padding: 0.85rem 1rem 1.1rem;
+
+    h3 {
+        margin: 0.9rem 0 0.5rem;
+        font-size: 0.8rem;
+        color: #6b7280;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+}
+
+.items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 0.5rem;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.45rem;
+
+    &.destacado {
+        border-color: #d97706;
+        background: #fffbeb;
+    }
+
+    div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+    }
+}
+
+.badge {
+    align-self: flex-start;
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.25rem;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+}
+
+.desc {
+    color: #6b7280;
+    font-size: 0.75rem;
+}
+
+.precio {
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.stepper {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+
+    button {
+        width: 1.6rem;
+        height: 1.6rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.3rem;
+        background: #fff;
+        font: inherit;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    span {
+        min-width: 1.1rem;
+        text-align: center;
+        font-size: 0.87rem;
+    }
+}
+
+.candy-aviso {
+    display: block;
+    margin-top: 0.3rem;
+    color: #6b7280;
+    font-style: normal;
+    font-size: 0.78rem;
+}
