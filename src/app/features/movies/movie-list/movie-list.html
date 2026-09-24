@@ -21,7 +21,7 @@
 } @else {
 <div class="grilla">
     @for (p of peliculas(); track p.id) {
-    <article class="tarjeta">
+    <a class="tarjeta" [routerLink]="['/pelicula', p.id]">
         <div class="poster">
             @if (p.poster_url) {
             <img [src]="p.poster_url" [alt]="p.titulo" />
@@ -47,7 +47,7 @@
 
             <p class="sinopsis">{{ p.sinopsis }}</p>
         </div>
-    </article>
+    </a>
     } @empty {
     <p class="aviso">No hay películas que coincidan con la búsqueda.</p>
     }

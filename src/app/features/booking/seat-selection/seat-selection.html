@@ -1,0 +1,99 @@
+@if (cargando()) {
+<p class="aviso">Cargando la sala...</p>
+} @else if (funcion(); as f) {
+
+<header class="cabecera">
+    <div>
+        <h1>{{ f.pelicula }}</h1>
+        <p class="meta">{{ hora(f.inicio) }} · {{ f.sala }} · {{ f.formato }} · {{ f.idioma }}</p>
+    </div>
+    <a class="volver" [routerLink]="['/pelicula', f.movieId]">Otros horarios</a>
+</header>
+
+@if (bloqueoEdad(); as motivo) {
+<p class="bloqueo">
+    {{ motivo }}
+    @if (!auth.autenticado()) {
+    <a routerLink="/ingresar">Ingresar</a>
+    }
+</p>
+}
+
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+@if (compra(); as c) {
+<section class="confirmacion">
+    <h2>Compra confirmada</h2>
+    <p>Total abonado: <strong>{{ c.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong></p>
+    <p class="codigo">Codigo de retiro: <code>{{ c.qr }}</code></p>
+    <p class="nota">
+        Presenta este codigo en la puerta de la sala. El PDF con el QR se genera en la proxima etapa.
+    </p>
+</section>
+}
+
+<div class="pantalla">PANTALLA</div>
+
+<div class="mapa">
+    @for (fila of filas(); track fila.fila) {
+    <div class="fila" [class.accesible]="fila.tipo === 'accesible'">
+        <span class="letra">{{ fila.fila }}</span>
+
+        @for (bloque of fila.bloques; track $index) {
+        <div class="bloque">
+            @for (b of bloque; track b.id) {
+            <button
+                type="button"
+                class="butaca"
+                [class.ocupada]="b.ocupada"
+                [class.bloqueada]="b.bloqueada"
+                [class.elegida]="b.seleccionada"
+                [class.vip]="b.tipo === 'vip'"
+                [class.accesible]="b.tipo === 'accesible'"
+                [disabled]="b.ocupada || b.bloqueada"
+                [title]="etiqueta(b) + ' - ' + b.tipo"
+                (click)="alternar(b)">
+                {{ b.numero }}
+            </button>
+            }
+        </div>
+        }
+
+        <span class="letra">{{ fila.fila }}</span>
+    </div>
+    }
+</div>
+
+<div class="referencias">
+    <span><i class="m libre"></i> Libre</span>
+    <span><i class="m elegida"></i> Elegida</span>
+    <span><i class="m bloqueada"></i> En proceso</span>
+    <span><i class="m ocupada"></i> Vendida</span>
+    <span><i class="m vip"></i> VIP</span>
+    <span><i class="m accesible"></i> Accesible</span>
+</div>
+
+@if (seleccion().length) {
+<aside class="resumen">
+    <div>
+        <strong>{{ seleccion().length }} butacas:</strong>
+        @for (b of seleccion(); track b.id) {
+        <span class="tag">{{ etiqueta(b) }}</span>
+        }
+        @if (hayVip()) {
+        <em class="vip-aviso">Incluye butacas VIP, con precio diferencial.</em>
+        }
+    </div>
+
+    <div class="cierre">
+        <strong class="total">{{ total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+        <button type="button" [disabled]="comprando()" (click)="confirmar()">
+            {{ comprando() ? 'Procesando...' : 'Confirmar compra' }}
+        </button>
+    </div>
+</aside>
+}
+
+}

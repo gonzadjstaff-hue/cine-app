@@ -1,0 +1,59 @@
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+@if (cargando()) {
+<p class="aviso">Cargando...</p>
+} @else if (pelicula(); as p) {
+<article class="ficha">
+    <div class="poster">
+        @if (p.poster_url) {
+        <img [src]="p.poster_url" [alt]="p.titulo" />
+        } @else {
+        <span>{{ p.titulo.charAt(0) }}</span>
+        }
+    </div>
+
+    <div class="datos">
+        <h1>{{ p.titulo }}</h1>
+        <p class="meta">
+            <span class="edad">{{ etiquetaEdad(p.clasificacion) }}</span>
+            {{ duracion(p.duracion_min) }}
+        </p>
+
+        @if (p.generos.length) {
+        <ul class="generos">
+            @for (g of p.generos; track g.id) {
+            <li>{{ g.nombre }}</li>
+            }
+        </ul>
+        }
+
+        <p class="sinopsis">{{ p.sinopsis }}</p>
+
+        @if (p.clasificacion !== 'atp') {
+        <p class="advertencia">
+            Función con restricción por edad. Los menores deben asistir con un adulto responsable.
+        </p>
+        }
+    </div>
+</article>
+
+<h2>Funciones</h2>
+
+@for (d of dias(); track d.etiqueta) {
+<section class="dia">
+    <h3>{{ d.etiqueta }}</h3>
+    <div class="horarios">
+        @for (f of d.funciones; track f.id) {
+        <a class="horario" [routerLink]="['/funcion', f.id]">
+            <strong>{{ hora(f.inicio) }}</strong>
+            <span>{{ f.sala }} · {{ f.formato }} · {{ f.idioma }}</span>
+        </a>
+        }
+    </div>
+</section>
+} @empty {
+<p class="aviso">No hay funciones programadas por el momento.</p>
+}
+}

@@ -11,6 +11,22 @@ export const routes: Routes = [
             import('./features/movies/movie-list/movie-list').then((m) => m.MovieList)
     },
     {
+        path: 'pelicula/:id',
+        title: 'Película',
+        loadComponent: () =>
+            import('./features/movies/movie-detail/movie-detail').then(
+                (m) => m.MovieDetail
+            )
+    },
+    {
+        path: 'funcion/:id',
+        title: 'Elegir butacas',
+        loadComponent: () =>
+            import('./features/booking/seat-selection/seat-selection').then(
+                (m) => m.SeatSelection
+            )
+    },
+    {
         path: 'ingresar',
         title: 'Ingresar',
         loadComponent: () => import('./features/auth/login/login').then((m) => m.Login)

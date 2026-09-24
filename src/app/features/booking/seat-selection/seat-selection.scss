@@ -1,0 +1,265 @@
+.cabecera {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    margin: 0 0 0.2rem;
+    font-size: 1.35rem;
+}
+
+.meta {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+.volver {
+    flex-shrink: 0;
+    color: #374151;
+    font-size: 0.85rem;
+}
+
+.pantalla {
+    margin: 1.5rem auto 1.75rem;
+    padding: 0.35rem;
+    max-width: 30rem;
+    border-radius: 0 0 50% 50% / 0 0 100% 100%;
+    background: #e5e7eb;
+    color: #6b7280;
+    text-align: center;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+}
+
+.mapa {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.fila {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    &.accesible {
+        padding: 0.2rem 0;
+        border-top: 1px dashed #93c5fd;
+        border-bottom: 1px dashed #93c5fd;
+    }
+}
+
+.letra {
+    width: 1rem;
+    color: #9ca3af;
+    font-size: 0.7rem;
+    text-align: center;
+}
+
+.bloque {
+    display: flex;
+    gap: 0.15rem;
+}
+
+.butaca {
+    width: 1.15rem;
+    height: 1.15rem;
+    padding: 0;
+    border: 1px solid #d1d5db;
+    border-radius: 0.2rem;
+    background: #fff;
+    color: transparent;
+    font-size: 0.5rem;
+    cursor: pointer;
+
+    &.vip {
+        border-color: #d97706;
+        background: #fef3c7;
+    }
+
+    &.accesible {
+        border-color: #3b82f6;
+        background: #dbeafe;
+    }
+
+    &.elegida {
+        border-color: #065f46;
+        background: #10b981;
+    }
+
+    &.bloqueada {
+        border-color: #9ca3af;
+        background: #e5e7eb;
+        cursor: not-allowed;
+    }
+
+    &.ocupada {
+        border-color: #6b7280;
+        background: #6b7280;
+        cursor: not-allowed;
+    }
+}
+
+.referencias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin: 1.25rem 0;
+    color: #6b7280;
+    font-size: 0.75rem;
+
+    span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+}
+
+.m {
+    width: 0.8rem;
+    height: 0.8rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.2rem;
+    display: inline-block;
+
+    &.libre {
+        background: #fff;
+    }
+
+    &.elegida {
+        border-color: #065f46;
+        background: #10b981;
+    }
+
+    &.bloqueada {
+        background: #e5e7eb;
+    }
+
+    &.ocupada {
+        background: #6b7280;
+    }
+
+    &.vip {
+        border-color: #d97706;
+        background: #fef3c7;
+    }
+
+    &.accesible {
+        border-color: #3b82f6;
+        background: #dbeafe;
+    }
+}
+
+.resumen {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.6rem;
+    background: #fff;
+    box-shadow: 0 -2px 10px rgb(0 0 0 / 6%);
+}
+
+.tag {
+    display: inline-block;
+    margin-left: 0.3rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.25rem;
+    background: #f3f4f6;
+    font-size: 0.78rem;
+}
+
+.vip-aviso {
+    display: block;
+    margin-top: 0.3rem;
+    color: #92400e;
+    font-style: normal;
+    font-size: 0.78rem;
+}
+
+.cierre {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.total {
+    font-size: 1.1rem;
+}
+
+.cierre button {
+    padding: 0.6rem 1.1rem;
+    border: 0;
+    border-radius: 0.4rem;
+    background: #111827;
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:disabled {
+        opacity: 0.6;
+    }
+}
+
+.confirmacion {
+    margin-bottom: 1.25rem;
+    padding: 1rem 1.15rem;
+    border-radius: 0.6rem;
+    background: #dcfce7;
+    color: #166534;
+
+    h2 {
+        margin: 0 0 0.4rem;
+        font-size: 1.05rem;
+    }
+
+    p {
+        margin: 0 0 0.3rem;
+    }
+}
+
+.codigo code {
+    padding: 0.1rem 0.35rem;
+    border-radius: 0.25rem;
+    background: #fff;
+    font-size: 0.85rem;
+}
+
+.nota {
+    font-size: 0.8rem;
+    opacity: 0.85;
+}
+
+.bloqueo {
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.5rem;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 0.87rem;
+
+    a {
+        margin-left: 0.4rem;
+        color: #92400e;
+        font-weight: 600;
+    }
+}
+
+.aviso {
+    color: #6b7280;
+}
+
+.error {
+    color: #b91c1c;
+}

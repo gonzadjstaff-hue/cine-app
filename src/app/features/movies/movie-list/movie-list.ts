@@ -1,11 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { MoviesService } from '../../../core/services/movies';
 import { AgeRating, Genre, Movie } from '../../../core/models/movie';
 
 @Component({
   selector: 'app-movie-list',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './movie-list.html',
   styleUrl: './movie-list.scss'
 })

@@ -145,4 +145,23 @@ export class MoviesService {
             throw new Error(error.message);
         }
     }
+
+    async obtener(id: string): Promise<Movie> {
+        const { data, error } = await this.supabase.client
+            .from('movies')
+            .select(CAMPOS_MOVIE)
+            .eq('id', id)
+            .single();
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        const fila = data as Record<string, unknown>;
+
+        return {
+            ...fila,
+            generos: fila['genres'] ?? []
+        } as unknown as Movie;
+    }
 }
