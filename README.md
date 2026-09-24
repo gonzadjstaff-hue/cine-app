@@ -37,6 +37,8 @@ Las migraciones están en `supabase/migrations/` y se aplican en orden desde el 
 | `004_disponibilidad.sql` | Disponibilidad pública de butacas |
 | `005_ranking.sql` | Top 3 más vendidas y promedio de reseñas |
 | `006_fidelizacion.sql` | Cupones, crédito, puntos y cancelación |
+| `007_validar_cupon.sql` | Validación previa de cupón |
+| `008_reportes.sql` | Reportes de facturación y rankings |
 
 ## Arquitectura
 
@@ -140,6 +142,12 @@ El checkout no envía importes. El cliente inserta la orden con sus entradas y p
 
 Si el precio viniera del navegador, cualquiera podría comprar a cero modificando la petición. Por la misma razón, `credito` y `puntos` en `profiles` están protegidos por un trigger que impide que un usuario se los modifique: sólo las funciones internas pueden tocarlos, mediante una bandera local a la transacción.
 
+### Los reportes agregan sin exponer
+
+Las funciones de reporte son `security definer` y **verifican el rol adentro**: si quien llama no es administrador, cortan con excepción. Ocultar el enlace en el menú no es seguridad; alguien puede llamar a la API directamente.
+
+El frontend usa `Promise.allSettled` en lugar de `Promise.all`: si una consulta falla, los demás paneles se cargan igual y el error indica cuál falló, en vez de dejar la pantalla en blanco.
+
 ### La cancelación devuelve crédito, no dinero
 
 `cancelar_compra` verifica que falten al menos 2 horas para la función (configurable en `app_config`), desactiva las entradas —lo que libera las butacas sin borrar el historial—, acredita el importe en la cuenta del usuario y revierte los puntos que esa compra había otorgado.
@@ -190,11 +198,11 @@ La pantalla con el **mapa del cine** que indica la ubicación de la sala se docu
 - Validación de QR por empleados, con canje independiente de entrada y candy
 - Historial de compras con saldo de crédito y puntos
 - Cupones (primera compra y mayores de 50), cancelación con crédito y acreditación de puntos
+- Reportes de administración: facturación diaria, entradas vendidas, películas más vistas de la semana y del mes, producto más vendido del candy, con gráficos y exportación a PDF y Excel
 
 **Pendiente**
 
 - Canje de puntos por entradas y productos
-- Reportes de facturación con gráficos y exportación a PDF y Excel
 - Preventa con precio especial
 - Sección "Mis películas"
 - Notificaciones push de estrenos

@@ -73,5 +73,12 @@ export const routes: Routes = [
                 (m) => m.ShowtimeAdmin
             )
     },
+    {
+        path: 'admin/reportes',
+        title: 'Reportes',
+        canActivate: [rolGuard(['admin'])],
+        loadComponent: () =>
+            import('./features/admin/reports/reports').then((m) => m.Reports)
+    },
     { path: '**', redirectTo: 'cartelera' }
 ];

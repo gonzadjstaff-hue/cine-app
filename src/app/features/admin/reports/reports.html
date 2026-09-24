@@ -1,0 +1,109 @@
+<header class="cabecera">
+    <h1>Reportes</h1>
+    <div class="acciones">
+        <button type="button" (click)="exportarPdf()">Exportar PDF</button>
+        <button type="button" (click)="exportarExcel()">Exportar Excel</button>
+    </div>
+</header>
+
+<section class="rango">
+    <label>
+        Desde
+        <input type="date" [(ngModel)]="desde" />
+    </label>
+    <label>
+        Hasta
+        <input type="date" [(ngModel)]="hasta" />
+    </label>
+    <button type="button" [disabled]="cargando()" (click)="cargar()">
+        {{ cargando() ? 'Cargando...' : 'Actualizar' }}
+    </button>
+</section>
+
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+<section class="tarjetas">
+    <article>
+        <span class="rotulo">Facturación del período</span>
+        <strong>{{ totalPeriodo() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+    </article>
+    <article>
+        <span class="rotulo">Entradas vendidas</span>
+        <strong>{{ entradasPeriodo() }}</strong>
+    </article>
+    <article>
+        <span class="rotulo">Más vendido en candy</span>
+        @if (masVendido(); as top) {
+        <strong>{{ top.nombre }}</strong>
+        <span class="detalle">{{ top.unidades }} unidades</span>
+        } @else {
+        <strong>—</strong>
+        }
+    </article>
+</section>
+
+<section class="grafico">
+    <h2>Facturación diaria</h2>
+    <div class="lienzo">
+        <canvas #lienzoFacturacion></canvas>
+    </div>
+</section>
+
+<section class="grafico">
+    <h2>Películas más vistas del mes</h2>
+    <div class="lienzo">
+        <canvas #lienzoPeliculas></canvas>
+    </div>
+</section>
+
+<div class="tablas">
+    <section>
+        <h2>Más vistas de la semana</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Película</th>
+                    <th>Entradas</th>
+                    <th>Recaudado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (f of semana(); track f.nombre) {
+                <tr>
+                    <td>{{ f.nombre }}</td>
+                    <td>{{ f.unidades }}</td>
+                    <td>{{ f.monto | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+                </tr>
+                } @empty {
+                <tr><td colspan="3" class="vacio">Sin ventas en la semana.</td></tr>
+                }
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Candy bar</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Unidades</th>
+                    <th>Recaudado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (f of candy(); track f.nombre) {
+                <tr>
+                    <td>{{ f.nombre }}</td>
+                    <td>{{ f.unidades }}</td>
+                    <td>{{ f.monto | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+                </tr>
+                } @empty {
+                <tr><td colspan="3" class="vacio">Sin ventas de candy.</td></tr>
+                }
+            </tbody>
+        </table>
+    </section>
+</div>
