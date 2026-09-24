@@ -49,4 +49,8 @@ export interface ResultadoCompra {
     orderId: string;
     qr: string;
     total: number;
+    descuento: number;
+    creditoUsado: number;
+    pagadoReal: number;
+    puntosGanados: number;
 }

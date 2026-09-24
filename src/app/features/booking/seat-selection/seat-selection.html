@@ -26,7 +26,16 @@
 @if (compra(); as c) {
 <section class="confirmacion">
     <h2>Compra confirmada</h2>
-    <p>Total abonado: <strong>{{ c.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong></p>
+    @if (c.descuento > 0) {
+    <p>Descuento aplicado: <strong>-{{ c.descuento | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong></p>
+    }
+    @if (c.creditoUsado > 0) {
+    <p>Pagado con crédito: <strong>{{ c.creditoUsado | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong></p>
+    }
+    <p>Total: <strong>{{ c.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong></p>
+    @if (c.puntosGanados > 0) {
+    <p class="puntos">Sumaste {{ c.puntosGanados }} puntos</p>
+    }
     <p class="codigo">Codigo de retiro: <code>{{ c.qr }}</code></p>
     <p class="nota">Presenta el QR en la puerta de la sala y en el candy bar.</p>
     <button type="button" class="descargar" [disabled]="descargando()" (click)="descargarEntrada()">
@@ -129,6 +138,20 @@
         </div>
         }
     </div>
+    }
+</section>
+
+<section class="beneficios">
+    <label class="cupon">
+        Cupón de descuento
+        <input type="text" placeholder="BIENVENIDO" [(ngModel)]="codigoCupon" />
+    </label>
+
+    @if (creditoAplicable() > 0) {
+    <label class="credito">
+        <input type="checkbox" [(ngModel)]="usarCredito" />
+        Usar mi crédito ({{ creditoAplicable() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }} disponible)
+    </label>
     }
 </section>
 

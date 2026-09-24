@@ -60,3 +60,43 @@ h1 {
 .error {
     color: var(--error);
 }
+
+.saldos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+
+    div {
+        flex: 1 1 10rem;
+        padding: 0.85rem 1rem;
+        border: 1px solid var(--borde-2);
+        border-radius: var(--radio);
+        background: var(--superficie);
+    }
+
+    strong {
+        display: block;
+        margin-top: 0.15rem;
+        font-size: 1.25rem;
+    }
+}
+
+.rotulo {
+    color: var(--texto-3);
+    font-size: 0.78rem;
+}
+
+.ok {
+    padding: 0.6rem 0.85rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    background: var(--ok-suave);
+    color: var(--ok-2);
+    font-size: 0.87rem;
+}
+
+.cancelar {
+    border-color: var(--error-borde) !important;
+    color: var(--error);
+}

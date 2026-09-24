@@ -60,6 +60,14 @@ export class AuthService {
         this.perfil.set(error ? null : (data as Profile));
     }
 
+    async refrescarPerfil(): Promise<void> {
+        const id = this.perfil()?.id;
+
+        if (id) {
+            await this.cargarPerfil(id);
+        }
+    }
+
     async registrar(datos: DatosRegistro): Promise<void> {
         const { error } = await this.supabase.client.auth.signUp({
             email: datos.email,

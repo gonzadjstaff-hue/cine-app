@@ -214,24 +214,16 @@ export class BookingService {
         items: ItemDeCompra[],
         userId: string | null,
         email: string,
-        sessionId: string
+        sessionId: string,
+        codigoCupon: string | null,
+        usarCredito: boolean
     ): Promise<ResultadoCompra> {
-        const totalButacas = butacas.reduce((acc, b) => acc + b.precio, 0);
-        const totalItems = items.reduce(
-            (acc, i) => acc + i.precioUnit * i.cantidad,
-            0
-        );
-        const total = totalButacas + totalItems;
-
         const { data: orden, error: errorOrden } = await this.supabase.client
             .from('orders')
             .insert({
                 user_id: userId,
                 email_contacto: email,
-                estado: 'pagada',
-                subtotal: total,
-                total,
-                pagado_real: total
+                estado: 'pendiente'
             })
             .select('id, qr_codigo')
             .single();
@@ -274,12 +266,56 @@ export class BookingService {
                 );
 
             if (errorItems) {
+                await this.supabase.client.from('orders').delete().eq('id', id);
                 throw new Error(errorItems.message);
             }
         }
 
+        const { data: cierre, error: errorCierre } = await this.supabase.client.rpc(
+            'finalizar_compra',
+            {
+                p_order_id: id,
+                p_codigo_cupon: codigoCupon,
+                p_usar_credito: usarCredito
+            }
+        );
+
+        if (errorCierre) {
+            await this.supabase.client.from('orders').delete().eq('id', id);
+            throw new Error(errorCierre.message);
+        }
+
+        const resumen = ((cierre ?? []) as {
+            subtotal: number;
+            descuento: number;
+            credito_usado: number;
+            total: number;
+            pagado_real: number;
+            puntos_ganados: number;
+        }[])[0];
+
         await this.liberarTodas(showtimeId, sessionId);
 
-        return { orderId: id, qr: qr_codigo, total };
+        return {
+            orderId: id,
+            qr: qr_codigo,
+            total: Number(resumen?.total ?? 0),
+            descuento: Number(resumen?.descuento ?? 0),
+            creditoUsado: Number(resumen?.credito_usado ?? 0),
+            pagadoReal: Number(resumen?.pagado_real ?? 0),
+            puntosGanados: Number(resumen?.puntos_ganados ?? 0)
+        };
+    }
+
+    async cancelar(orderId: string): Promise<number> {
+        const { data, error } = await this.supabase.client.rpc('cancelar_compra', {
+            p_order_id: orderId
+        });
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        return Number(data ?? 0);
     }
 }

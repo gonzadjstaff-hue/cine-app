@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { BookingService } from '../../../core/services/booking';
@@ -17,7 +18,7 @@ import {
 
 @Component({
     selector: 'app-seat-selection',
-    imports: [RouterLink, CurrencyPipe],
+    imports: [RouterLink, CurrencyPipe, FormsModule],
     templateUrl: './seat-selection.html',
     styleUrl: './seat-selection.scss'
 })
@@ -50,6 +51,8 @@ export class SeatSelection implements OnInit, OnDestroy {
     protected readonly combos = signal<Combo[]>([]);
     protected readonly carrito = signal<ItemDeCompra[]>([]);
     protected readonly mostrarCandy = signal(false);
+    protected codigoCupon = '';
+    protected usarCredito = false;
 
     ngOnInit(): void {
         this.cargar();
@@ -321,13 +324,18 @@ export class SeatSelection implements OnInit, OnDestroy {
                 this.carrito(),
                 this.auth.perfil()?.id ?? null,
                 email,
-                this.sessionId
+                this.sessionId,
+                this.codigoCupon.trim() || null,
+                this.usarCredito
             );
 
             this.compra.set(resultado);
             this.seleccion.set([]);
             this.carrito.set([]);
             this.mostrarCandy.set(false);
+            this.codigoCupon = '';
+            this.usarCredito = false;
+            await this.auth.refrescarPerfil();
             await this.refrescarEstado();
         } catch (e) {
             this.error.set((e as Error).message);
@@ -355,5 +363,13 @@ export class SeatSelection implements OnInit, OnDestroy {
         } finally {
             this.descargando.set(false);
         }
+    }
+
+    protected creditoDisponible(): number {
+        return this.auth.perfil()?.credito ?? 0;
+    }
+
+    protected creditoAplicable(): number {
+        return Math.min(this.creditoDisponible(), this.total());
     }
 }

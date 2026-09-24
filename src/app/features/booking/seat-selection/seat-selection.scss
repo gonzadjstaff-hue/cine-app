@@ -401,3 +401,44 @@ h1 {
     font-style: normal;
     font-size: 0.78rem;
 }
+
+.beneficios {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1.25rem;
+    margin-bottom: 0.85rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--borde-2);
+    border-radius: var(--radio);
+    background: var(--superficie);
+}
+
+.cupon {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--texto-2);
+
+    input {
+        padding: 0.45rem 0.65rem;
+        border: 1px solid var(--borde);
+        border-radius: 0.4rem;
+        font: inherit;
+        text-transform: uppercase;
+    }
+}
+
+.credito {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.85rem;
+    color: var(--texto-2);
+}
+
+.puntos {
+    font-weight: 600;
+}

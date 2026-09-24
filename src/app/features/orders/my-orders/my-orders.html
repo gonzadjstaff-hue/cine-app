@@ -1,5 +1,22 @@
 <h1>Mis compras</h1>
 
+@if (auth.perfil(); as perfil) {
+<section class="saldos">
+    <div>
+        <span class="rotulo">Crédito disponible</span>
+        <strong>{{ perfil.credito | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+    </div>
+    <div>
+        <span class="rotulo">Puntos acumulados</span>
+        <strong>{{ perfil.puntos }}</strong>
+    </div>
+</section>
+}
+
+@if (aviso()) {
+<p class="ok">{{ aviso() }}</p>
+}
+
 @if (error()) {
 <p class="error">{{ error() }}</p>
 }
@@ -27,6 +44,15 @@
         <strong>{{ c.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
         @if (c.estado !== 'cancelada') {
         <button type="button" (click)="descargar(c)">Descargar PDF</button>
+        }
+        @if (puedeCancelar(c)) {
+        <button
+            type="button"
+            class="cancelar"
+            [disabled]="cancelando() === c.orderId"
+            (click)="cancelar(c)">
+            {{ cancelando() === c.orderId ? 'Cancelando...' : 'Cancelar' }}
+        </button>
         }
     </div>
 </article>

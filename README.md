@@ -36,6 +36,7 @@ Las migraciones están en `supabase/migrations/` y se aplican en orden desde el 
 | `003_seed.sql` | Datos de prueba (salas, cartelera, candy, cupones) |
 | `004_disponibilidad.sql` | Disponibilidad pública de butacas |
 | `005_ranking.sql` | Top 3 más vendidas y promedio de reseñas |
+| `006_fidelizacion.sql` | Cupones, crédito, puntos y cancelación |
 
 ## Arquitectura
 
@@ -133,6 +134,16 @@ Criterio adoptado: el anónimo compra libremente las funciones sin restricción;
 
 "1 punto por cada peso gastado" no aclara qué pasa con lo pagado con crédito o con puntos canjeados. Si contaran, un usuario podría reciclar puntos indefinidamente. Se computan solo sobre el importe efectivamente abonado (`orders.pagado_real`).
 
+### El total lo calcula la base, no el navegador
+
+El checkout no envía importes. El cliente inserta la orden con sus entradas y productos, y luego llama a `finalizar_compra`, una función `security definer` que **recalcula el subtotal desde las filas ya guardadas**, valida el cupón (vigencia, usos, primera compra, edad mínima), aplica el crédito disponible, fija los totales y acredita los puntos. Todo en una sola transacción.
+
+Si el precio viniera del navegador, cualquiera podría comprar a cero modificando la petición. Por la misma razón, `credito` y `puntos` en `profiles` están protegidos por un trigger que impide que un usuario se los modifique: sólo las funciones internas pueden tocarlos, mediante una bandera local a la transacción.
+
+### La cancelación devuelve crédito, no dinero
+
+`cancelar_compra` verifica que falten al menos 2 horas para la función (configurable en `app_config`), desactiva las entradas —lo que libera las butacas sin borrar el historial—, acredita el importe en la cuenta del usuario y revierte los puntos que esa compra había otorgado.
+
 ### Datos de registro: objeción al requerimiento
 
 El cliente solicitó recopilar tipo de sangre, color de ojos y cantidad anual de días de vacaciones, describiéndolos como "nada muy invasivo". **Se implementó el registro sin esos campos.**
@@ -177,11 +188,12 @@ La pantalla con el **mapa del cine** que indica la ubicación de la sala se docu
 - Compra de entradas y candy bar con combos
 - PDF de entrada con QR
 - Validación de QR por empleados, con canje independiente de entrada y candy
-- Historial de compras
+- Historial de compras con saldo de crédito y puntos
+- Cupones (primera compra y mayores de 50), cancelación con crédito y acreditación de puntos
 
 **Pendiente**
 
-- Cupones, crédito por cancelación y programa de puntos
+- Canje de puntos por entradas y productos
 - Reportes de facturación con gráficos y exportación a PDF y Excel
 - Preventa con precio especial
 - Sección "Mis películas"
