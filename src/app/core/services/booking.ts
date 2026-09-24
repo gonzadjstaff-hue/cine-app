@@ -102,17 +102,15 @@ export class BookingService {
     }
 
     async butacasOcupadas(showtimeId: string): Promise<string[]> {
-        const { data, error } = await this.supabase.client
-            .from('order_tickets')
-            .select('seat_id')
-            .eq('showtime_id', showtimeId)
-            .eq('activo', true);
+        const { data, error } = await this.supabase.client.rpc('butacas_ocupadas', {
+            p_showtime_id: showtimeId
+        });
 
         if (error) {
             throw new Error(error.message);
         }
 
-        return (data ?? []).map((f) => (f as { seat_id: string }).seat_id);
+        return ((data ?? []) as { seat_id: string }[]).map((f) => f.seat_id);
     }
 
     async butacasBloqueadas(showtimeId: string, sessionId: string): Promise<string[]> {
