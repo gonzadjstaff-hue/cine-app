@@ -263,3 +263,19 @@ h1 {
 .error {
     color: #b91c1c;
 }
+
+.descargar {
+    margin-top: 0.6rem;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid #166534;
+    border-radius: 0.4rem;
+    background: #fff;
+    color: #166534;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:disabled {
+        opacity: 0.6;
+    }
+}

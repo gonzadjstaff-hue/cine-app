@@ -9,7 +9,12 @@
       <a routerLink="/admin/funciones" routerLinkActive="activo">Funciones</a>
     }
 
+    @if (auth.esStaff()) {
+      <a routerLink="/validar" routerLinkActive="activo">Validar</a>
+    }
+
     @if (auth.autenticado()) {
+      <a routerLink="/mis-compras" routerLinkActive="activo">Mis compras</a>
       <span class="usuario">
         {{ auth.nombreCompleto() }}
         @if (auth.esStaff()) {

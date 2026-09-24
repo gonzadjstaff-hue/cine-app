@@ -1,0 +1,73 @@
+<h1>Validar entrada</h1>
+
+<section class="buscador">
+    <input
+        type="text"
+        placeholder="Codigo del QR"
+        [(ngModel)]="codigo"
+        (keyup.enter)="buscar()" />
+    <button type="button" [disabled]="buscando()" (click)="buscar()">Buscar</button>
+    <button type="button" class="secundario" (click)="limpiar()">Limpiar</button>
+</section>
+
+<p class="ayuda">
+    Escanea el QR de la entrada o escribi el codigo a mano si el lector falla.
+</p>
+
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+@if (aviso()) {
+<p class="ok">{{ aviso() }}</p>
+}
+
+@if (entrada(); as e) {
+<article class="resultado" [class.usada]="todasCanjeadas(e)" [class.anulada]="e.estado === 'cancelada'">
+    <header>
+        <h2>{{ e.pelicula }}</h2>
+        @if (e.estado === 'cancelada') {
+        <span class="sello anulada">Compra cancelada</span>
+        } @else if (todasCanjeadas(e)) {
+        <span class="sello usada">Ya utilizada</span>
+        } @else {
+        <span class="sello valida">Valida</span>
+        }
+    </header>
+
+    <p class="meta">{{ fecha(e.inicio) }} · {{ e.sala }} · {{ e.formato }} · {{ e.idioma }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Butaca</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (b of e.butacas; track b.fila + b.numero) {
+            <tr>
+                <td>{{ b.fila }}{{ b.numero }}</td>
+                <td>{{ b.tipo }}</td>
+                <td>{{ b.canjeada ? 'Canjeada' : 'Pendiente' }}</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <p class="total">Total: {{ e.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</p>
+
+    @if (e.clasificacion !== 'atp') {
+    <p class="advertencia">
+        Funcion con restriccion por edad: verificar documento si el espectador aparenta ser menor.
+    </p>
+    }
+
+    @if (puedeIngresar(e)) {
+    <button type="button" class="canjear" [disabled]="canjeando()" (click)="canjear()">
+        {{ canjeando() ? 'Validando...' : 'Marcar ingreso' }}
+    </button>
+    }
+</article>
+}

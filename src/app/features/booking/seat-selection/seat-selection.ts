@@ -3,6 +3,7 @@ import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { BookingService } from '../../../core/services/booking';
+import { TicketsService } from '../../../core/services/tickets';
 import { AuthService } from '../../../core/services/auth';
 import {
     ButacaEnMapa,
@@ -23,6 +24,7 @@ export class SeatSelection implements OnInit, OnDestroy {
 
     private readonly booking = inject(BookingService);
     protected readonly auth = inject(AuthService);
+    private readonly tickets = inject(TicketsService);
 
     private readonly sessionId = crypto.randomUUID();
     private butacas: Seat[] = [];
@@ -40,6 +42,7 @@ export class SeatSelection implements OnInit, OnDestroy {
     protected readonly comprando = signal(false);
     protected readonly compra = signal<ResultadoCompra | null>(null);
     protected readonly bloqueoEdad = signal<string | null>(null);
+    protected readonly descargando = signal(false);
 
     ngOnInit(): void {
         this.cargar();
@@ -251,6 +254,26 @@ export class SeatSelection implements OnInit, OnDestroy {
             await this.refrescarEstado();
         } finally {
             this.comprando.set(false);
+        }
+    }
+
+    protected async descargarEntrada(): Promise<void> {
+        const compra = this.compra();
+
+        if (!compra) {
+            return;
+        }
+
+        this.descargando.set(true);
+        this.error.set(null);
+
+        try {
+            const entrada = await this.tickets.porId(compra.orderId);
+            await this.tickets.descargarPdf(entrada);
+        } catch (e) {
+            this.error.set((e as Error).message);
+        } finally {
+            this.descargando.set(false);
         }
     }
 }

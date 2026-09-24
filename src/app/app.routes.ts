@@ -38,11 +38,18 @@ export const routes: Routes = [
             import('./features/auth/register/register').then((m) => m.Register)
     },
     {
-        path: 'mi-cuenta',
-        title: 'Mi cuenta',
+        path: 'mis-compras',
+        title: 'Mis compras',
         canActivate: [authGuard],
         loadComponent: () =>
-            import('./features/movies/movie-list/movie-list').then((m) => m.MovieList)
+            import('./features/orders/my-orders/my-orders').then((m) => m.MyOrders)
+    },
+    {
+        path: 'validar',
+        title: 'Validar entrada',
+        canActivate: [rolGuard(['empleado', 'admin'])],
+        loadComponent: () =>
+            import('./features/staff/validate/validate').then((m) => m.Validate)
     },
     {
         path: 'admin/peliculas',

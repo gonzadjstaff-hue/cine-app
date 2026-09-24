@@ -1,0 +1,33 @@
+<h1>Mis compras</h1>
+
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+@if (cargando()) {
+<p class="aviso">Cargando...</p>
+} @else {
+@for (c of compras(); track c.orderId) {
+<article class="compra">
+    <div class="datos">
+        <strong>{{ c.pelicula }}</strong>
+        <span class="meta">
+            {{ fecha(c.inicio) }} · {{ c.sala }} · {{ c.formato }}
+        </span>
+        <span class="meta">Butacas {{ butacas(c) }}</span>
+        @if (c.estado === 'cancelada') {
+        <span class="cancelada">Cancelada</span>
+        }
+    </div>
+
+    <div class="cierre">
+        <strong>{{ c.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+        @if (c.estado !== 'cancelada') {
+        <button type="button" (click)="descargar(c)">Descargar PDF</button>
+        }
+    </div>
+</article>
+} @empty {
+<p class="aviso">Todavía no compraste entradas.</p>
+}
+}
