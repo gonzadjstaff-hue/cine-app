@@ -53,13 +53,6 @@
                 </label>
 
                 <label>
-                    Estreno
-                    <app-date-picker formControlName="fecha_estreno" />
-                </label>
-            </div>
-
-            <div class="fila">
-                <label>
                     Clasificación
                     <select formControlName="clasificacion">
                         @for (c of clasificaciones; track c) {
@@ -67,16 +60,13 @@
                         }
                     </select>
                 </label>
-
-                <label>
-                    Estado
-                    <select formControlName="estado">
-                        <option value="cartelera">En cartelera</option>
-                        <option value="proximamente">Próximamente</option>
-                        <option value="archivada">Archivada</option>
-                    </select>
-                </label>
             </div>
+
+            <label>
+                Estreno
+                <app-date-picker formControlName="fecha_estreno" />
+                <small>{{ destino() }}</small>
+            </label>
 
             <label>
                 Sinopsis
@@ -101,6 +91,11 @@
             <label class="check">
                 <input type="checkbox" formControlName="destacada_home" />
                 Mostrar en la portada
+            </label>
+
+            <label class="check">
+                <input type="checkbox" formControlName="archivada" />
+                Archivada (deja de mostrarse al público)
             </label>
 
             <fieldset class="preventa">
