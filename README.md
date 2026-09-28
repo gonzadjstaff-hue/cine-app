@@ -42,6 +42,7 @@ Las migraciones están en `supabase/migrations/` y se aplican en orden desde el 
 | `009_preventa.sql` | Precio especial de preventa por película |
 | `010_canje_puntos.sql` | Canje de puntos por recompensas (productos del candy bar) |
 | `011_canje_en_compra.sql` | Canje de entradas con puntos integrado a `finalizar_compra` |
+| `012_auditoria_validacion.sql` | Auditoría de validación de QR en `activity_log` |
 
 ## Arquitectura
 
@@ -115,7 +116,7 @@ Ninguna revela a quién pertenece la compra. El mismo criterio se aplica en todo
 
 ### Auditoría automática
 
-El log de actividad no depende de que la aplicación se acuerde de registrar. Hay triggers en la base que escriben en `activity_log` al crear una función y al modificar el precio de un producto, con usuario, acción y fecha.
+El log de actividad no depende de que la aplicación se acuerde de registrar. Hay triggers en la base que escriben en `activity_log` al crear una función, al modificar el precio de un producto y al validar un QR (ingreso a sala o entrega de candy), con usuario, acción y fecha. Los triggers de validación son a nivel *statement*: una validación marca todas las entradas de la orden a la vez y deja una sola fila de log por orden. El panel de admin tiene una pantalla de actividad que muestra el registro; solo un administrador puede leerlo (política RLS).
 
 ---
 
@@ -209,6 +210,8 @@ La pantalla con el **mapa del cine** que indica la ubicación de la sala se docu
 - Preventa con precio especial por película
 - Sección "Mis películas" con historial visual y calificación propia
 - Canje de puntos integrado al checkout (contador de entradas a canjear en el mapa de butacas) y canje de productos del candy bar desde "Mis compras"
+- Log de actividad visible en el panel de admin, con auditoría de validaciones de QR
+- Ventana de preventa sugerida automáticamente según `dias_preventa` de `app_config`
 
 **Pendiente**
 

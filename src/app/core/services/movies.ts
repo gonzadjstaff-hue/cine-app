@@ -45,6 +45,16 @@ export class MoviesService {
         return (data ?? []) as Genre[];
     }
 
+    async diasPreventa(): Promise<number> {
+        const { data } = await this.supabase.client
+            .from('app_config')
+            .select('valor')
+            .eq('clave', 'dias_preventa')
+            .single();
+
+        return Number((data as { valor: unknown } | null)?.valor ?? 7);
+    }
+
     async listarCartelera(filtro: FiltroCartelera = {}): Promise<Movie[]> {
         let idsPorGenero: string[] | null = null;
 
