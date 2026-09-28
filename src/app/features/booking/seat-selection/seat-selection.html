@@ -65,11 +65,10 @@
                 type="button"
                 class="butaca"
                 [class.ocupada]="b.ocupada"
-                [class.bloqueada]="b.bloqueada"
                 [class.elegida]="b.seleccionada"
                 [class.vip]="b.tipo === 'vip'"
                 [class.accesible]="b.tipo === 'accesible'"
-                [disabled]="b.ocupada || b.bloqueada"
+                [disabled]="b.ocupada"
                 [title]="etiqueta(b) + ' - ' + b.tipo"
                 (click)="alternar(b)">
                 {{ b.numero }}
@@ -86,7 +85,6 @@
 <div class="referencias">
     <span><i class="m libre"></i> Libre</span>
     <span><i class="m elegida"></i> Elegida</span>
-    <span><i class="m bloqueada"></i> En proceso</span>
     <span><i class="m ocupada"></i> Vendida</span>
     <span><i class="m vip"></i> VIP</span>
     <span><i class="m accesible"></i> Accesible</span>

@@ -132,73 +132,13 @@ export class BookingService {
         return ((data ?? []) as { seat_id: string }[]).map((f) => f.seat_id);
     }
 
-    async butacasBloqueadas(showtimeId: string, sessionId: string): Promise<string[]> {
-        const { data, error } = await this.supabase.client
-            .from('seat_locks')
-            .select('seat_id, session_id, expires_at')
-            .eq('showtime_id', showtimeId)
-            .gt('expires_at', new Date().toISOString());
-
-        if (error) {
-            throw new Error(error.message);
-        }
-
-        return (data ?? [])
-            .map((f) => f as { seat_id: string; session_id: string })
-            .filter((f) => f.session_id !== sessionId)
-            .map((f) => f.seat_id);
-    }
-
-    async bloquear(
-        showtimeId: string,
-        seatId: string,
-        sessionId: string,
-        userId: string | null,
-        minutos: number
-    ): Promise<boolean> {
-        const expira = new Date(Date.now() + minutos * 60000).toISOString();
-
-        const { error } = await this.supabase.client.from('seat_locks').insert({
-            showtime_id: showtimeId,
-            seat_id: seatId,
-            session_id: sessionId,
-            user_id: userId,
-            expires_at: expira
-        });
-
-        return !error;
-    }
-
-    async liberar(showtimeId: string, seatId: string, sessionId: string): Promise<void> {
-        await this.supabase.client
-            .from('seat_locks')
-            .delete()
-            .eq('showtime_id', showtimeId)
-            .eq('seat_id', seatId)
-            .eq('session_id', sessionId);
-    }
-
-    async liberarTodas(showtimeId: string, sessionId: string): Promise<void> {
-        await this.supabase.client
-            .from('seat_locks')
-            .delete()
-            .eq('showtime_id', showtimeId)
-            .eq('session_id', sessionId);
-    }
-
+    // La base emite un aviso sin datos a este canal cada vez que se
+    // vende, cancela o descarta una entrada de la funcion (trigger
+    // trg_avisar_butacas). El mapa vuelve a pedir las ocupadas.
     suscribir(showtimeId: string, alCambiar: () => void): RealtimeChannel {
         return this.supabase.client
             .channel(`funcion-${showtimeId}`)
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'seat_locks' },
-                alCambiar
-            )
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'order_tickets' },
-                alCambiar
-            )
+            .on('broadcast', { event: 'butacas' }, alCambiar)
             .subscribe();
     }
 
@@ -214,16 +154,6 @@ export class BookingService {
             .single();
 
         return Number((data as { valor: unknown } | null)?.valor ?? 0);
-    }
-
-    async minutosBloqueo(): Promise<number> {
-        const { data } = await this.supabase.client
-            .from('app_config')
-            .select('valor')
-            .eq('clave', 'minutos_bloqueo_butaca')
-            .single();
-
-        return Number((data as { valor: unknown } | null)?.valor ?? 8);
     }
 
     async validarCupon(
@@ -256,7 +186,6 @@ export class BookingService {
         items: ItemDeCompra[],
         userId: string | null,
         email: string,
-        sessionId: string,
         codigoCupon: string | null,
         usarCredito: boolean,
         canjearEntradas: number
@@ -337,8 +266,6 @@ export class BookingService {
             pagado_real: number;
             puntos_ganados: number;
         }[])[0];
-
-        await this.liberarTodas(showtimeId, sessionId);
 
         return {
             orderId: id,
