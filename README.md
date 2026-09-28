@@ -43,6 +43,9 @@ Las migraciones están en `supabase/migrations/` y se aplican en orden desde el 
 | `010_canje_puntos.sql` | Canje de puntos por recompensas (productos del candy bar) |
 | `011_canje_en_compra.sql` | Canje de entradas con puntos integrado a `finalizar_compra` |
 | `012_auditoria_validacion.sql` | Auditoría de validación de QR en `activity_log` |
+| `013_push.sql` | Suscripciones a notificaciones push |
+
+La Edge Function `supabase/functions/notificar-estrenos` se despliega desde el panel de Supabase (Edge Functions) y necesita los secretos `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` y, opcionalmente, `VAPID_SUBJECT`.
 
 ## Arquitectura
 
@@ -184,6 +187,14 @@ El recargo VIP es configurable en `app_config` y se calcula sobre el precio base
 
 No hay pasarela de pago real. La confirmación de compra registra la orden como pagada sin procesar un cobro, lo que está fuera del alcance de la materia.
 
+### Alertas de estreno con notificaciones push
+
+El cliente pidió que el usuario pueda activar una alerta y recibir una notificación cuando la película salga a la venta. Se eligió push por sobre mail porque la app ya es una PWA: el service worker de Angular (`ngsw-worker.js`) recibe la notificación y la muestra sin código propio, y al hacer clic abre la ficha de la película. Al activar la alerta, `SwPush` pide permiso y la suscripción del navegador se guarda en `push_subscriptions` (un usuario puede tener varias: PC y celular).
+
+El envío lo hace la Edge Function `notificar-estrenos`, que corre del lado del servidor porque firma con la clave privada VAPID, que nunca puede llegar al navegador. Se dispara al programar funciones, verifica que quien la llama sea administrador y es idempotente: solo procesa alertas pendientes de películas que ya tienen funciones a la venta, y marca `notificado = true` recién cuando la notificación llegó a al menos un navegador. Si el usuario no dio permiso, la alerta queda pendiente. Las suscripciones que el navegador dio de baja (404/410) se borran solas.
+
+Las notificaciones solo funcionan en la versión publicada: el service worker de Angular no se registra en `ng serve`.
+
 ### Selector de fecha propio
 
 El cliente rechazó explícitamente el `<input type="date">` nativo del navegador (lo marcó como algo a evitar, con una captura de pantalla en el mail). Se construyó `app-date-picker` (`src/app/shared/date-picker`), un `ControlValueAccessor` propio con calendario, navegación por mes/año y valor en formato `YYYY-MM-DD`, que reemplaza al nativo en toda la app: alta y filtro de funciones, estreno y preventa de películas, fecha de nacimiento y rango de reportes.
@@ -217,10 +228,7 @@ La pantalla con el **mapa del cine** que indica la ubicación de la sala se docu
 - Log de actividad visible en el panel de admin, con auditoría de validaciones de QR
 - Ventana de preventa sugerida automáticamente según `dias_preventa` de `app_config`
 - Selector de fecha propio (sin depender del `<input type="date">` nativo del navegador), usado en toda la app
-
-**Pendiente**
-
-- Notificaciones push de estrenos (hoy la alerta queda registrada en la base, pero no se envía)
+- Notificaciones push de estreno a quienes activaron la alerta, enviadas al programar funciones
 
 ---
 
