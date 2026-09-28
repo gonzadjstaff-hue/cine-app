@@ -44,6 +44,7 @@ Las migraciones están en `supabase/migrations/` y se aplican en orden desde el 
 | `011_canje_en_compra.sql` | Canje de entradas con puntos integrado a `finalizar_compra` |
 | `012_auditoria_validacion.sql` | Auditoría de validación de QR en `activity_log` |
 | `013_push.sql` | Suscripciones a notificaciones push |
+| `014_estado_pelicula.sql` | Estado de la película derivado de la fecha de estreno |
 
 La Edge Function `supabase/functions/notificar-estrenos` se despliega desde el panel de Supabase (Edge Functions) y necesita los secretos `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` y, opcionalmente, `VAPID_SUBJECT`.
 
@@ -186,6 +187,10 @@ El recargo VIP es configurable en `app_config` y se calcula sobre el precio base
 ### Pago simulado
 
 No hay pasarela de pago real. La confirmación de compra registra la orden como pagada sin procesar un cobro, lo que está fuera del alcance de la materia.
+
+### El estado de una película se deriva del estreno
+
+Cargar a mano el estado ("cartelera" o "próximamente") además de la fecha de estreno era redundante: eran dos datos que podían contradecirse. Ahora el estado es un campo calculado en la base (la función `estado(movies)`, que PostgREST expone como una columna más): con estreno futuro la película está en Próximamente y el día del estreno pasa sola a Cartelera, sin que nadie la edite. La fecha de hoy se toma en hora argentina, porque en UTC la película cambiaría de sección tres horas antes. Lo único manual es **archivarla**, para sacarla de circulación cuando deja de proyectarse.
 
 ### Alertas de estreno con notificaciones push
 

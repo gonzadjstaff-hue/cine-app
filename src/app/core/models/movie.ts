@@ -14,6 +14,7 @@ export interface Movie {
   sinopsis: string;
   clasificacion: AgeRating;
   estado: MovieStatus;
+  archivada: boolean;
   fecha_estreno: string;
   destacada_home: boolean;
   preventa_activa: boolean;

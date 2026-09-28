@@ -31,7 +31,7 @@ export class MovieAdmin {
         duracion_min: [100, [Validators.required, Validators.min(1)]],
         sinopsis: ['', Validators.required],
         clasificacion: ['atp' as AgeRating, Validators.required],
-        estado: ['cartelera' as Movie['estado'], Validators.required],
+        archivada: [false],
         fecha_estreno: ['', Validators.required],
         destacada_home: [false],
         preventa_activa: [false],
@@ -120,7 +120,7 @@ export class MovieAdmin {
             duracion_min: 100,
             sinopsis: '',
             clasificacion: 'atp',
-            estado: 'cartelera',
+            archivada: false,
             fecha_estreno: '',
             destacada_home: false,
             preventa_activa: false,
@@ -139,7 +139,7 @@ export class MovieAdmin {
             duracion_min: pelicula.duracion_min,
             sinopsis: pelicula.sinopsis,
             clasificacion: pelicula.clasificacion,
-            estado: pelicula.estado,
+            archivada: pelicula.archivada,
             fecha_estreno: pelicula.fecha_estreno,
             destacada_home: pelicula.destacada_home,
             preventa_activa: pelicula.preventa_activa,
@@ -219,6 +219,28 @@ export class MovieAdmin {
         const d = new Date(iso);
         const p = (n: number) => String(n).padStart(2, '0');
         return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+    }
+
+    // Misma regla que la funcion estado() de la base: se muestra
+    // antes de guardar para que el admin sepa donde va a aparecer.
+    protected destino(): string {
+        const { fecha_estreno, archivada } = this.formulario.getRawValue();
+
+        if (archivada) {
+            return 'Archivada: no se muestra al público.';
+        }
+
+        if (!fecha_estreno) {
+            return 'Con fecha futura va a Próximamente; desde el estreno, a Cartelera.';
+        }
+
+        const hoy = new Date();
+        const p = (n: number) => String(n).padStart(2, '0');
+        const hoyIso = `${hoy.getFullYear()}-${p(hoy.getMonth() + 1)}-${p(hoy.getDate())}`;
+
+        return fecha_estreno > hoyIso
+            ? 'Se va a mostrar en Próximamente y pasa sola a Cartelera el día del estreno.'
+            : 'Se va a mostrar en Cartelera.';
     }
 
     protected preventaActiva(): boolean {
