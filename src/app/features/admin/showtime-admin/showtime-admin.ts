@@ -4,10 +4,11 @@ import { MoviesService } from '../../../core/services/movies';
 import { ShowtimesService } from '../../../core/services/showtimes';
 import { Movie } from '../../../core/models/movie';
 import { FilmFormat, LanguageType, Showtime } from '../../../core/models/showtime';
+import { DatePicker } from '../../../shared/date-picker/date-picker';
 
 @Component({
     selector: 'app-showtime-admin',
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, DatePicker],
     templateUrl: './showtime-admin.html',
     styleUrl: './showtime-admin.scss'
 })

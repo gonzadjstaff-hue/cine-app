@@ -26,6 +26,11 @@ h1 {
     gap: 1rem;
     margin-bottom: 0.75rem;
 
+    app-date-picker {
+        width: 11rem;
+        flex-shrink: 0;
+    }
+
     h2 {
         margin: 0;
         font-size: 0.95rem;

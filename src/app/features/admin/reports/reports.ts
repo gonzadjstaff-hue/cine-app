@@ -15,10 +15,11 @@ import { jsPDF } from 'jspdf';
 import * as XLSX from 'xlsx';
 import { ReportsService } from '../../../core/services/reports';
 import { FilaFacturacion, FilaRanking } from '../../../core/models/report';
+import { DatePicker } from '../../../shared/date-picker/date-picker';
 
 @Component({
     selector: 'app-reports',
-    imports: [FormsModule, CurrencyPipe],
+    imports: [FormsModule, CurrencyPipe, DatePicker],
     templateUrl: './reports.html',
     styleUrl: './reports.scss'
 })
