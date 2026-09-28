@@ -1,0 +1,38 @@
+<h1>Log de actividad</h1>
+<p class="descripcion">
+    Registro automático de acciones sensibles: creación de funciones, cambios de precio
+    y validaciones de QR. Lo escribe la base de datos, no la aplicación.
+</p>
+
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+@if (cargando()) {
+<p class="aviso">Cargando...</p>
+} @else {
+<table>
+    <thead>
+        <tr>
+            <th>Fecha y hora</th>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>Detalle</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (r of registros(); track r.id) {
+        <tr>
+            <td class="fecha">{{ fecha(r.fecha) }}</td>
+            <td>{{ r.usuario }}</td>
+            <td><span class="accion" [attr.data-accion]="r.accion">{{ etiqueta(r.accion) }}</span></td>
+            <td class="detalle">{{ detalle(r) }}</td>
+        </tr>
+        } @empty {
+        <tr>
+            <td colspan="4" class="aviso">Todavía no hay actividad registrada.</td>
+        </tr>
+        }
+    </tbody>
+</table>
+}

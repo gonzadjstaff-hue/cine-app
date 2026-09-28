@@ -87,5 +87,14 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./features/admin/reports/reports').then((m) => m.Reports)
     },
+    {
+        path: 'admin/actividad',
+        title: 'Log de actividad',
+        canActivate: [rolGuard(['admin'])],
+        loadComponent: () =>
+            import('./features/admin/activity-log/activity-log').then(
+                (m) => m.ActivityLog
+            )
+    },
     { path: '**', redirectTo: 'cartelera' }
 ];

@@ -13,6 +13,8 @@ export class MovieAdmin {
     private readonly fb = inject(FormBuilder);
     private readonly moviesService = inject(MoviesService);
 
+    private diasPreventa = 7;
+
     protected readonly peliculas = signal<Movie[]>([]);
     protected readonly generos = signal<Genre[]>([]);
     protected readonly editando = signal<string | null>(null);
@@ -44,10 +46,43 @@ export class MovieAdmin {
     private async inicializar(): Promise<void> {
         try {
             this.generos.set(await this.moviesService.listarGeneros());
+            this.diasPreventa = await this.moviesService.diasPreventa();
             await this.refrescar();
         } catch (e) {
             this.error.set((e as Error).message);
         }
+
+        this.formulario.controls.preventa_activa.valueChanges.subscribe((activa) => {
+            if (activa) {
+                this.sugerirVentanaPreventa();
+            }
+        });
+    }
+
+    // La consigna define la preventa como los dias previos al estreno
+    // (configurable en app_config). Al activarla se propone esa ventana;
+    // el admin puede ajustarla si necesita otra.
+    private sugerirVentanaPreventa(): void {
+        const c = this.formulario.controls;
+        const estreno = c.fecha_estreno.value;
+
+        if (!estreno || c.preventa_inicio.value || c.preventa_fin.value) {
+            return;
+        }
+
+        const fin = new Date(`${estreno}T00:00`);
+        const inicio = new Date(fin.getTime() - this.diasPreventa * 86400000);
+        const local = (d: Date) => {
+            const p = (n: number) => String(n).padStart(2, '0');
+            return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+        };
+
+        c.preventa_inicio.setValue(local(inicio));
+        c.preventa_fin.setValue(local(fin));
+    }
+
+    protected leyendaPreventa(): string {
+        return `Ventana sugerida: ${this.diasPreventa} días antes del estreno (configurable en app_config).`;
     }
 
     private async refrescar(): Promise<void> {

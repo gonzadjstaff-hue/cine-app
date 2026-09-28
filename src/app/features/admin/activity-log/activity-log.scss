@@ -1,0 +1,66 @@
+h1 {
+    margin: 0 0 0.35rem;
+    font-size: 1.4rem;
+}
+
+.descripcion {
+    margin: 0 0 1.25rem;
+    color: var(--texto-3);
+    font-size: 0.85rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--borde-2);
+    border-radius: var(--radio);
+    background: var(--superficie);
+    overflow: hidden;
+}
+
+th {
+    padding: 0.6rem 0.85rem;
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--texto-3);
+    border-bottom: 1px solid var(--borde-2);
+}
+
+td {
+    padding: 0.55rem 0.85rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--borde-2);
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+.fecha {
+    white-space: nowrap;
+    color: var(--texto-3);
+}
+
+.detalle {
+    color: var(--texto-3);
+}
+
+.accion {
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.3rem;
+    background: var(--acento-suave);
+    color: var(--acento-2);
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.aviso {
+    color: var(--texto-3);
+}
+
+.error {
+    color: var(--error);
+}
