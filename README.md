@@ -197,7 +197,13 @@ Las notificaciones solo funcionan en la versión publicada: el service worker de
 
 ### Selector de fecha propio
 
-El cliente rechazó explícitamente el `<input type="date">` nativo del navegador (lo marcó como algo a evitar, con una captura de pantalla en el mail). Se construyó `app-date-picker` (`src/app/shared/date-picker`), un `ControlValueAccessor` propio con calendario, navegación por mes/año y valor en formato `YYYY-MM-DD`, que reemplaza al nativo en toda la app: alta y filtro de funciones, estreno y preventa de películas, fecha de nacimiento y rango de reportes.
+El cliente rechazó los calendarios desplegables (adjuntó una captura) porque obligan a buscar y scrollear. `app-date-picker` (`src/app/shared/date-picker`) los reemplaza sin usar ninguna grilla de calendario:
+
+- La fecha **se escribe** con máscara `dd/mm/aaaa`: las barras se ponen solas y se valida que la fecha exista. Para una fecha de nacimiento es lo más rápido: no hay que navegar años.
+- Al **programar funciones** se ofrecen atajos de un clic para los próximos 14 días ("Hoy", "Mañana", "Mié 1/10"...), igual que los chips de horarios.
+- El filtro de **funciones del día** tiene flechas para pasar de un día al siguiente.
+
+Es un `ControlValueAccessor`, así que funciona con `formControlName` y `ngModel` sin cambios en los formularios. Se usa en programación y filtro de funciones, estreno de películas, fecha de nacimiento y rango de reportes.
 
 ### Fuera de alcance
 

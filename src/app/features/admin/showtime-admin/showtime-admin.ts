@@ -72,6 +72,10 @@ export class ShowtimeAdmin {
     }
 
     protected cambiarFecha(valor: string): void {
+        if (!valor) {
+            return;
+        }
+
         this.fechaListado.set(valor);
         this.refrescar();
     }

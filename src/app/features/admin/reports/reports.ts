@@ -66,6 +66,11 @@ export class Reports implements OnInit, AfterViewInit, OnDestroy {
     }
 
     protected async cargar(): Promise<void> {
+        if (!this.desde || !this.hasta) {
+            this.error.set('Completá las dos fechas del período (dd/mm/aaaa).');
+            return;
+        }
+
         this.cargando.set(true);
         this.error.set(null);
 

@@ -25,7 +25,7 @@
 
             <label>
                 Fecha
-                <app-date-picker formControlName="fecha" />
+                <app-date-picker formControlName="fecha" [atajos]="14" />
             </label>
 
             <fieldset>
@@ -78,6 +78,7 @@
         <div class="encabezado">
             <h2>Funciones del día</h2>
             <app-date-picker
+                [flechas]="true"
                 [value]="fechaListado()"
                 (valueChange)="cambiarFecha($event)" />
         </div>

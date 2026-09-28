@@ -1,176 +1,89 @@
 :host {
-    position: relative;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
     width: 100%;
 }
 
-.disparador {
+.campo {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.5rem 0.7rem;
-    border: 1px solid var(--borde);
-    border-radius: 0.45rem;
-    background: var(--superficie);
-    color: var(--texto);
-    font: inherit;
-    font-size: 0.88rem;
-    text-align: left;
-    cursor: pointer;
-
-    svg {
-        flex-shrink: 0;
-        color: var(--texto-3);
-    }
-
-    &:hover {
-        border-color: var(--acento-2);
-    }
-
-    &:focus-visible {
-        outline: 2px solid var(--acento);
-        outline-offset: 1px;
-    }
-
-    &.vacio {
-        color: var(--texto-3);
-    }
-
-    &:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-    }
-}
-
-.calendario {
-    position: absolute;
-    z-index: 20;
-    top: calc(100% + 0.35rem);
-    left: 0;
-    width: 16.5rem;
-    padding: 0.75rem;
-    border: 1px solid var(--borde-2);
-    border-radius: var(--radio);
-    background: var(--superficie);
-    box-shadow: var(--sombra);
-}
-
-.encabezado {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     gap: 0.3rem;
-    margin-bottom: 0.5rem;
-}
 
-.selectores {
-    display: flex;
-    gap: 0.25rem;
-    min-width: 0;
-
-    select {
+    input {
+        flex: 1;
         min-width: 0;
-        padding: 0.15rem 0.2rem;
-        border: 1px solid var(--borde-2);
-        border-radius: 0.3rem;
+        padding: 0.55rem 0.7rem;
+        border: 1px solid var(--borde);
+        border-radius: 0.45rem;
         background: var(--superficie);
         color: var(--texto);
         font: inherit;
-        font-size: 0.75rem;
-        text-transform: capitalize;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.03em;
+
+        &:focus-visible {
+            outline: 2px solid var(--acento);
+            outline-offset: 1px;
+        }
+
+        &.invalida {
+            border-color: var(--error);
+        }
     }
 }
 
-.nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.6rem;
-    height: 1.6rem;
-    border: none;
-    border-radius: 0.35rem;
-    background: transparent;
+:host(.ng-touched.ng-invalid) .campo input {
+    border-color: var(--error);
+}
+
+.flecha {
+    flex-shrink: 0;
+    width: 2.2rem;
+    border: 1px solid var(--borde);
+    border-radius: 0.45rem;
+    background: var(--superficie);
     color: var(--texto-2);
+    font: inherit;
     font-size: 1.1rem;
     line-height: 1;
     cursor: pointer;
 
     &:hover {
-        background: var(--superficie-2);
+        border-color: var(--acento-2);
+        color: var(--acento-2);
     }
 }
 
-.semana {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    margin-bottom: 0.2rem;
-
-    span {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 1.6rem;
-        color: var(--texto-3);
-        font-size: 0.7rem;
-        font-weight: 600;
-    }
+.mensaje {
+    color: var(--error);
+    font-size: 0.75rem;
+    font-weight: 400;
 }
 
-.grilla {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.15rem;
-}
-
-.dia {
+.atajos {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 2rem;
-    border: none;
-    border-radius: 0.4rem;
-    background: transparent;
-    color: var(--texto);
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.atajo {
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    background: var(--superficie);
+    color: var(--texto-2);
     font: inherit;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
+    font-weight: 500;
     cursor: pointer;
 
     &:hover {
-        background: var(--superficie-2);
-    }
-
-    &.fuera {
-        color: var(--texto-4);
-    }
-
-    &.hoy {
-        font-weight: 700;
-        color: var(--acento-2);
+        border-color: var(--acento-2);
     }
 
     &.elegido {
+        border-color: var(--acento);
         background: var(--acento);
         color: #fff;
-        font-weight: 600;
-    }
-}
-
-.hoy-btn {
-    width: 100%;
-    margin-top: 0.5rem;
-    padding: 0.35rem;
-    border: 1px solid var(--borde-2);
-    border-radius: 0.4rem;
-    background: var(--superficie-3);
-    color: var(--acento-2);
-    font: inherit;
-    font-size: 0.78rem;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:hover {
-        background: var(--acento-suave);
     }
 }
