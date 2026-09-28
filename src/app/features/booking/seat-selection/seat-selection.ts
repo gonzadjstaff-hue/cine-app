@@ -6,7 +6,9 @@ import { RealtimeChannel } from '@supabase/supabase-js';
 import { BookingService } from '../../../core/services/booking';
 import { TicketsService } from '../../../core/services/tickets';
 import { ProductsService } from '../../../core/services/products';
+import { RewardsService } from '../../../core/services/rewards';
 import { Combo, ItemDeCompra, Producto } from '../../../core/models/candy';
+import { Recompensa } from '../../../core/models/reward';
 import { AuthService } from '../../../core/services/auth';
 import {
     ButacaEnMapa,
@@ -29,6 +31,7 @@ export class SeatSelection implements OnInit, OnDestroy {
     protected readonly auth = inject(AuthService);
     private readonly tickets = inject(TicketsService);
     private readonly products = inject(ProductsService);
+    private readonly rewards = inject(RewardsService);
 
     private readonly sessionId = crypto.randomUUID();
     private butacas: Seat[] = [];
@@ -55,6 +58,8 @@ export class SeatSelection implements OnInit, OnDestroy {
     protected usarCredito = false;
     protected readonly descuentoCupon = signal(0);
     protected readonly verificandoCupon = signal(false);
+    protected readonly recompensaEntrada = signal<Recompensa | null>(null);
+    protected readonly canjes = signal(0);
 
     ngOnInit(): void {
         this.cargar();
@@ -80,19 +85,22 @@ export class SeatSelection implements OnInit, OnDestroy {
             this.funcion.set(funcion);
             this.verificarEdad(funcion);
 
-            const [butacas, recargo, minutos, productos, combos] = await Promise.all([
-                this.booking.butacasDeSala(funcion.roomId),
-                this.booking.recargoVip(),
-                this.booking.minutosBloqueo(),
-                this.products.listarProductos(),
-                this.products.listarCombos()
-            ]);
+            const [butacas, recargo, minutos, productos, combos, recompensas] =
+                await Promise.all([
+                    this.booking.butacasDeSala(funcion.roomId),
+                    this.booking.recargoVip(),
+                    this.booking.minutosBloqueo(),
+                    this.products.listarProductos(),
+                    this.products.listarCombos(),
+                    this.rewards.listar()
+                ]);
 
             this.butacas = butacas;
             this.recargoVip = recargo;
             this.minutosBloqueo = minutos;
             this.productos.set(productos);
             this.combos.set(combos);
+            this.recompensaEntrada.set(recompensas.find((r) => r.esEntrada) ?? null);
 
             await this.refrescarEstado();
 
@@ -343,7 +351,7 @@ export class SeatSelection implements OnInit, OnDestroy {
     }
 
     protected totalConDescuento(): number {
-        return Math.max(this.total() - this.descuentoCupon(), 0);
+        return Math.max(this.total() - this.descuentoCupon() - this.descuentoPorCanje(), 0);
     }
 
     private async reponerBloqueos(): Promise<void> {
@@ -396,7 +404,8 @@ export class SeatSelection implements OnInit, OnDestroy {
                 email,
                 this.sessionId,
                 this.codigoCupon.trim() || null,
-                this.usarCredito
+                this.usarCredito,
+                this.canjesEfectivos()
             );
 
             this.compra.set(resultado);
@@ -406,6 +415,7 @@ export class SeatSelection implements OnInit, OnDestroy {
             this.codigoCupon = '';
             this.usarCredito = false;
             this.descuentoCupon.set(0);
+            this.canjes.set(0);
             await this.auth.refrescarPerfil();
             await this.refrescarEstado();
         } catch (e) {
@@ -415,6 +425,47 @@ export class SeatSelection implements OnInit, OnDestroy {
         } finally {
             this.comprando.set(false);
         }
+    }
+
+    protected maxCanjes(): number {
+        const recompensa = this.recompensaEntrada();
+        const puntos = this.auth.perfil()?.puntos ?? 0;
+
+        if (!recompensa) {
+            return 0;
+        }
+
+        return Math.min(
+            Math.floor(puntos / recompensa.costoPuntos),
+            this.seleccion().length
+        );
+    }
+
+    protected canjesEfectivos(): number {
+        return Math.min(this.canjes(), this.maxCanjes());
+    }
+
+    protected ajustarCanjes(delta: number): void {
+        const valor = this.canjesEfectivos() + delta;
+        this.canjes.set(Math.max(0, Math.min(valor, this.maxCanjes())));
+    }
+
+    protected descuentoPorCanje(): number {
+        const cantidad = this.canjesEfectivos();
+
+        if (cantidad === 0) {
+            return 0;
+        }
+
+        return [...this.seleccion()]
+            .sort((a, b) => a.precio - b.precio)
+            .slice(0, cantidad)
+            .reduce((acc, b) => acc + b.precio, 0);
+    }
+
+    protected puntosDelCanje(): number {
+        const recompensa = this.recompensaEntrada();
+        return recompensa ? this.canjesEfectivos() * recompensa.costoPuntos : 0;
     }
 
     protected async descargarEntrada(): Promise<void> {

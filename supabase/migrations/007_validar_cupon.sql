@@ -29,9 +29,11 @@ declare
   v_perfil profiles%rowtype;
   v_edad   integer;
 begin
+  -- coupons.codigo va calificado: "codigo" a secas es ambiguo
+  -- porque tambien es una columna de salida de esta funcion.
   select * into v_cupon
   from coupons
-  where upper(codigo) = upper(trim(p_codigo)) and activo;
+  where upper(coupons.codigo) = upper(trim(p_codigo)) and coupons.activo;
 
   if not found then
     raise exception 'El cupon no existe o no esta vigente';

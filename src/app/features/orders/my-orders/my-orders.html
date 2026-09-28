@@ -13,6 +13,26 @@
 </section>
 }
 
+@if (recompensasDeProducto().length) {
+<section class="canje">
+    <h2>Canjeá tus puntos</h2>
+    @for (item of recompensasDeProducto(); track item.recompensa.id) {
+    <article class="recompensa">
+        <div>
+            <strong>{{ item.recompensa.nombre }}</strong>
+            <span class="meta">{{ item.recompensa.costoPuntos }} puntos</span>
+        </div>
+        <button
+            type="button"
+            [disabled]="!puedeCanjear(item.recompensa.costoPuntos) || canjeando() === item.recompensa.id"
+            (click)="canjearProducto(item)">
+            {{ canjeando() === item.recompensa.id ? 'Canjeando...' : 'Canjear' }}
+        </button>
+    </article>
+    }
+</section>
+}
+
 @if (aviso()) {
 <p class="ok">{{ aviso() }}</p>
 }

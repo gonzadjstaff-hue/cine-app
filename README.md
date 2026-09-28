@@ -39,6 +39,9 @@ Las migraciones están en `supabase/migrations/` y se aplican en orden desde el 
 | `006_fidelizacion.sql` | Cupones, crédito, puntos y cancelación |
 | `007_validar_cupon.sql` | Validación previa de cupón |
 | `008_reportes.sql` | Reportes de facturación y rankings |
+| `009_preventa.sql` | Precio especial de preventa por película |
+| `010_canje_puntos.sql` | Canje de puntos por recompensas (productos del candy bar) |
+| `011_canje_en_compra.sql` | Canje de entradas con puntos integrado a `finalizar_compra` |
 
 ## Arquitectura
 
@@ -136,6 +139,10 @@ Criterio adoptado: el anónimo compra libremente las funciones sin restricción;
 
 "1 punto por cada peso gastado" no aclara qué pasa con lo pagado con crédito o con puntos canjeados. Si contaran, un usuario podría reciclar puntos indefinidamente. Se computan solo sobre el importe efectivamente abonado (`orders.pagado_real`).
 
+### El canje de puntos convive con la compra, no la duplica
+
+El cliente pidió canjear puntos por entradas gratis o productos del candy bar, con el costo en puntos configurable por recompensa (tabla `rewards`). El canje de entradas está integrado al checkout: en el mapa de butacas un contador permite elegir cuántas de las butacas seleccionadas se canjean, y `finalizar_compra` recibe esa cantidad, valida el saldo, pone en cero las butacas más baratas (una VIP se paga, salvo que solo haya VIP) y cobra el resto con las reglas de siempre: el cupón y el crédito aplican sobre lo que queda, y los puntos se acumulan solo sobre el dinero real pagado, así que un canje no genera puntos nuevos. Los productos de candy se canjean desde "Mis compras" mediante `canjear_recompensa`. Todos los movimientos quedan en `points_ledger` con motivo `'canje'`, y la cancelación devuelve los puntos gastados además de revertir los ganados.
+
 ### El total lo calcula la base, no el navegador
 
 El checkout no envía importes. El cliente inserta la orden con sus entradas y productos, y luego llama a `finalizar_compra`, una función `security definer` que **recalcula el subtotal desde las filas ya guardadas**, valida el cupón (vigencia, usos, primera compra, edad mínima), aplica el crédito disponible, fija los totales y acredita los puntos. Todo en una sola transacción.
@@ -199,13 +206,13 @@ La pantalla con el **mapa del cine** que indica la ubicación de la sala se docu
 - Historial de compras con saldo de crédito y puntos
 - Cupones (primera compra y mayores de 50), cancelación con crédito y acreditación de puntos
 - Reportes de administración: facturación diaria, entradas vendidas, películas más vistas de la semana y del mes, producto más vendido del candy, con gráficos y exportación a PDF y Excel
+- Preventa con precio especial por película
+- Sección "Mis películas" con historial visual y calificación propia
+- Canje de puntos integrado al checkout (contador de entradas a canjear en el mapa de butacas) y canje de productos del candy bar desde "Mis compras"
 
 **Pendiente**
 
-- Canje de puntos por entradas y productos
-- Preventa con precio especial
-- Sección "Mis películas"
-- Notificaciones push de estrenos
+- Notificaciones push de estrenos (hoy la alerta queda registrada en la base, pero no se envía)
 
 ---
 

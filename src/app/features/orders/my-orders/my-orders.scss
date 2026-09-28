@@ -100,3 +100,47 @@ h1 {
     border-color: var(--error-borde) !important;
     color: var(--error);
 }
+
+.canje {
+    margin-bottom: 1.25rem;
+
+    h2 {
+        margin: 0 0 0.6rem;
+        font-size: 1.05rem;
+    }
+}
+
+.recompensa {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--borde-2);
+    border-radius: 0.55rem;
+    background: var(--superficie);
+
+    .meta {
+        display: block;
+        color: var(--texto-3);
+        font-size: 0.8rem;
+    }
+
+    button {
+        padding: 0.45rem 0.9rem;
+        border: 1px solid var(--acento-2);
+        border-radius: 0.375rem;
+        background: var(--acento-suave);
+        color: var(--acento-2);
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+}
