@@ -5,6 +5,10 @@
 <p class="error">{{ error() }}</p>
 }
 
+@if (aviso()) {
+<p class="info">{{ aviso() }}</p>
+}
+
 @if (cargando()) {
 <p class="aviso">Cargando...</p>
 } @else {

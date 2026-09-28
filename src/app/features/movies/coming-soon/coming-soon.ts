@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MoviesService } from '../../../core/services/movies';
 import { AuthService } from '../../../core/services/auth';
+import { PushService } from '../../../core/services/push';
 import { AgeRating, Movie } from '../../../core/models/movie';
 
 @Component({
@@ -13,11 +14,13 @@ import { AgeRating, Movie } from '../../../core/models/movie';
 export class ComingSoon implements OnInit {
     private readonly moviesService = inject(MoviesService);
     protected readonly auth = inject(AuthService);
+    private readonly push = inject(PushService);
 
     protected readonly peliculas = signal<Movie[]>([]);
     protected readonly alertas = signal<string[]>([]);
     protected readonly cargando = signal(true);
     protected readonly error = signal<string | null>(null);
+    protected readonly aviso = signal<string | null>(null);
 
     async ngOnInit(): Promise<void> {
         try {
@@ -49,6 +52,7 @@ export class ComingSoon implements OnInit {
 
         const activar = !this.tieneAlerta(movieId);
         this.error.set(null);
+        this.aviso.set(null);
 
         try {
             await this.moviesService.alternarAlerta(movieId, userId, activar);
@@ -59,6 +63,20 @@ export class ComingSoon implements OnInit {
             );
         } catch (e) {
             this.error.set((e as Error).message);
+            return;
+        }
+
+        if (!activar) {
+            return;
+        }
+
+        // La alerta ya quedo guardada; si el permiso de notificaciones
+        // falla, solo se informa, no se deshace la alerta.
+        try {
+            await this.push.suscribir();
+            this.aviso.set('Listo: te vamos a mandar una notificación cuando salga a la venta.');
+        } catch (e) {
+            this.aviso.set((e as Error).message);
         }
     }
 

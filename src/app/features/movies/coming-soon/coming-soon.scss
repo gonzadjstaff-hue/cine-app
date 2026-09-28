@@ -113,3 +113,12 @@ h2 {
 .error {
     color: var(--error);
 }
+
+.info {
+    padding: 0.6rem 0.85rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    background: var(--accesible-suave);
+    color: var(--accesible);
+    font-size: 0.87rem;
+}

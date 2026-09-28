@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MoviesService } from '../../../core/services/movies';
 import { ShowtimesService } from '../../../core/services/showtimes';
+import { PushService } from '../../../core/services/push';
 import { Movie } from '../../../core/models/movie';
 import { FilmFormat, LanguageType, Showtime } from '../../../core/models/showtime';
 import { DatePicker } from '../../../shared/date-picker/date-picker';
@@ -16,6 +17,7 @@ export class ShowtimeAdmin {
     private readonly fb = inject(FormBuilder);
     private readonly moviesService = inject(MoviesService);
     private readonly showtimesService = inject(ShowtimesService);
+    private readonly push = inject(PushService);
 
     protected readonly peliculas = signal<Movie[]>([]);
     protected readonly funciones = signal<Showtime[]>([]);
@@ -120,13 +122,28 @@ export class ShowtimeAdmin {
                 );
             }
 
-            this.aviso.set(partes.join(' \u00b7 '));
+            if (resultado.creadas > 0) {
+                partes.push(await this.avisarEstrenos());
+            }
+
+            this.aviso.set(partes.filter(Boolean).join(' \u00b7 '));
             this.fechaListado.set(valores.fecha);
             await this.refrescar();
         } catch (e) {
             this.error.set((e as Error).message);
         } finally {
             this.enviando.set(false);
+        }
+    }
+
+    // Las funciones ya quedaron programadas: un fallo en el envio de
+    // notificaciones se informa pero no revierte nada.
+    private async avisarEstrenos(): Promise<string> {
+        try {
+            const { enviadas } = await this.push.notificarEstrenos();
+            return enviadas > 0 ? `${enviadas} notificaciones de estreno enviadas` : '';
+        } catch {
+            return 'no se pudieron enviar las notificaciones de estreno';
         }
     }
 
