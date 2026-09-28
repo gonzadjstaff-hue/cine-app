@@ -53,7 +53,7 @@ export class BookingService {
         const { data, error } = await this.supabase.client
             .from('showtimes')
             .select(
-                'id, inicio, fin, formato, idioma, precio_base, room_id, movie_id, rooms(nombre), movies(titulo, clasificacion, duracion_min)'
+                'id, inicio, fin, formato, idioma, precio_base, room_id, movie_id, rooms(nombre), movies(titulo, clasificacion, duracion_min, preventa_activa, preventa_inicio, preventa_fin, preventa_precio)'
             )
             .eq('id', showtimeId)
             .single();
@@ -66,9 +66,25 @@ export class BookingService {
         const sala = primero(f['rooms'] as { nombre: string } | null);
         const peli = primero(
             f['movies'] as
-                | { titulo: string; clasificacion: DetalleFuncion['clasificacion']; duracion_min: number }
+                | {
+                      titulo: string;
+                      clasificacion: DetalleFuncion['clasificacion'];
+                      duracion_min: number;
+                      preventa_activa: boolean;
+                      preventa_inicio: string | null;
+                      preventa_fin: string | null;
+                      preventa_precio: number | null;
+                  }
                 | null
         );
+
+        const ahora = Date.now();
+        const enPreventa =
+            !!peli?.preventa_activa &&
+            !!peli.preventa_inicio &&
+            !!peli.preventa_fin &&
+            new Date(peli.preventa_inicio).getTime() <= ahora &&
+            new Date(peli.preventa_fin).getTime() >= ahora;
 
         return {
             id: f['id'] as string,
@@ -82,7 +98,9 @@ export class BookingService {
             movieId: f['movie_id'] as string,
             pelicula: peli?.titulo ?? '',
             clasificacion: peli?.clasificacion ?? 'atp',
-            duracion_min: peli?.duracion_min ?? 0
+            duracion_min: peli?.duracion_min ?? 0,
+            preventaActiva: enPreventa,
+            preventaPrecio: enPreventa ? Number(peli?.preventa_precio ?? 0) : null
         };
     }
 

@@ -34,6 +34,8 @@ export interface DetalleFuncion {
     pelicula: string;
     clasificacion: 'atp' | 'plus13' | 'plus18';
     duracion_min: number;
+    preventaActiva: boolean;
+    preventaPrecio: number | null;
 }
 
 export interface FuncionDeCartelera {

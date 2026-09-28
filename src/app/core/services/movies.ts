@@ -11,6 +11,10 @@ export interface DatosPelicula {
     estado: MovieStatus;
     fecha_estreno: string;
     destacada_home: boolean;
+    preventa_activa: boolean;
+    preventa_inicio: string | null;
+    preventa_fin: string | null;
+    preventa_precio: number | null;
     generos: string[];
 }
 
@@ -20,7 +24,7 @@ export interface FiltroCartelera {
 }
 
 const CAMPOS_MOVIE =
-    'id, titulo, poster_url, duracion_min, sinopsis, clasificacion, estado, fecha_estreno, destacada_home, genres(id, nombre)';
+    'id, titulo, poster_url, duracion_min, sinopsis, clasificacion, estado, fecha_estreno, destacada_home, preventa_activa, preventa_inicio, preventa_fin, preventa_precio, genres(id, nombre)';
 
 @Injectable({
     providedIn: 'root'

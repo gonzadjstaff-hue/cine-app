@@ -129,8 +129,20 @@ export class SeatSelection implements OnInit, OnDestroy {
         }
     }
 
+    protected precioBase(): number {
+        const f = this.funcion();
+
+        if (!f) {
+            return 0;
+        }
+
+        return f.preventaActiva && f.preventaPrecio !== null
+            ? f.preventaPrecio
+            : f.precio_base;
+    }
+
     private precioDe(butaca: Seat): number {
-        const base = this.funcion()?.precio_base ?? 0;
+        const base = this.precioBase();
         return butaca.tipo === 'vip'
             ? Math.round(base * (1 + this.recargoVip / 100))
             : base;

@@ -16,6 +16,7 @@
     }
 
     @if (auth.autenticado()) {
+      <a routerLink="/mis-peliculas" routerLinkActive="activo">Mis películas</a>
       <a routerLink="/mis-compras" routerLinkActive="activo">Mis compras</a>
       <span class="usuario">
         {{ auth.nombreCompleto() }}

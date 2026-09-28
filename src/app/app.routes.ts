@@ -44,6 +44,13 @@ export const routes: Routes = [
             import('./features/auth/register/register').then((m) => m.Register)
     },
     {
+        path: 'mis-peliculas',
+        title: 'Mis películas',
+        canActivate: [authGuard],
+        loadComponent: () =>
+            import('./features/movies/my-movies/my-movies').then((m) => m.MyMovies)
+    },
+    {
         path: 'mis-compras',
         title: 'Mis compras',
         canActivate: [authGuard],

@@ -7,7 +7,7 @@ import { EntradaButaca, EntradaCompleta, EntradaProducto } from '../models/ticke
 const CAMPOS =
     'id, qr_codigo, total, created_at, email_contacto, estado, ' +
     'order_tickets(precio, canjeado_at, seats(fila, numero, tipo), ' +
-    'showtimes(inicio, formato, idioma, rooms(nombre), movies(titulo, clasificacion))), ' +
+    'showtimes(inicio, formato, idioma, rooms(nombre), movies(id, titulo, poster_url, clasificacion))), ' +
     'order_products(cantidad, precio_unit, canjeado_at, products(nombre), combos(nombre))';
 
 function primero<T>(valor: T | T[] | null | undefined): T | null {
@@ -106,7 +106,12 @@ export class TicketsService {
         const peli = funcion
             ? primero(
                   funcion['movies'] as
-                      | { titulo: string; clasificacion: EntradaCompleta['clasificacion'] }
+                      | {
+                            id: string;
+                            titulo: string;
+                            poster_url: string | null;
+                            clasificacion: EntradaCompleta['clasificacion'];
+                        }
                       | null
               )
             : null;
@@ -154,7 +159,9 @@ export class TicketsService {
             fechaCompra: fila['created_at'] as string,
             email: fila['email_contacto'] as string,
             estado: fila['estado'] as EntradaCompleta['estado'],
+            movieId: peli?.id ?? '',
             pelicula: peli?.titulo ?? '',
+            poster: peli?.poster_url ?? null,
             clasificacion: peli?.clasificacion ?? 'atp',
             inicio: (funcion?.['inicio'] as string) ?? '',
             sala: sala?.nombre ?? '',

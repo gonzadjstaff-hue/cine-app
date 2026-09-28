@@ -16,5 +16,9 @@ export interface Movie {
   estado: MovieStatus;
   fecha_estreno: string;
   destacada_home: boolean;
+  preventa_activa: boolean;
+  preventa_inicio: string | null;
+  preventa_fin: string | null;
+  preventa_precio: number | null;
   generos: Genre[];
 }

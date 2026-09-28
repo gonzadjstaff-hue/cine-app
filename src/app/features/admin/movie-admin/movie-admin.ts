@@ -30,7 +30,11 @@ export class MovieAdmin {
         clasificacion: ['atp' as AgeRating, Validators.required],
         estado: ['cartelera' as Movie['estado'], Validators.required],
         fecha_estreno: ['', Validators.required],
-        destacada_home: [false]
+        destacada_home: [false],
+        preventa_activa: [false],
+        preventa_inicio: [''],
+        preventa_fin: [''],
+        preventa_precio: [0]
     });
 
     constructor() {
@@ -82,7 +86,11 @@ export class MovieAdmin {
             clasificacion: 'atp',
             estado: 'cartelera',
             fecha_estreno: '',
-            destacada_home: false
+            destacada_home: false,
+            preventa_activa: false,
+            preventa_inicio: '',
+            preventa_fin: '',
+            preventa_precio: 0
         });
     }
 
@@ -97,7 +105,11 @@ export class MovieAdmin {
             clasificacion: pelicula.clasificacion,
             estado: pelicula.estado,
             fecha_estreno: pelicula.fecha_estreno,
-            destacada_home: pelicula.destacada_home
+            destacada_home: pelicula.destacada_home,
+            preventa_activa: pelicula.preventa_activa,
+            preventa_inicio: this.aFechaLocal(pelicula.preventa_inicio),
+            preventa_fin: this.aFechaLocal(pelicula.preventa_fin),
+            preventa_precio: pelicula.preventa_precio ?? 0
         });
     }
 
@@ -111,9 +123,29 @@ export class MovieAdmin {
         this.error.set(null);
 
         const valores = this.formulario.getRawValue();
+        const conPreventa =
+            valores.preventa_activa &&
+            valores.preventa_inicio &&
+            valores.preventa_fin &&
+            valores.preventa_precio > 0;
+
+        if (valores.preventa_activa && !conPreventa) {
+            this.error.set(
+                'Para activar la preventa hay que indicar inicio, fin y precio especial.'
+            );
+            this.enviando.set(false);
+            return;
+        }
+
         const datos: DatosPelicula = {
             ...valores,
             poster_url: valores.poster_url.trim() || null,
+            preventa_activa: !!conPreventa,
+            preventa_inicio: conPreventa
+                ? new Date(valores.preventa_inicio).toISOString()
+                : null,
+            preventa_fin: conPreventa ? new Date(valores.preventa_fin).toISOString() : null,
+            preventa_precio: conPreventa ? valores.preventa_precio : null,
             generos: [...this.generosElegidos]
         };
 
@@ -141,5 +173,19 @@ export class MovieAdmin {
         } catch (e) {
             this.error.set((e as Error).message);
         }
+    }
+
+    private aFechaLocal(iso: string | null): string {
+        if (!iso) {
+            return '';
+        }
+
+        const d = new Date(iso);
+        const p = (n: number) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+    }
+
+    protected preventaActiva(): boolean {
+        return this.formulario.controls.preventa_activa.value;
     }
 }

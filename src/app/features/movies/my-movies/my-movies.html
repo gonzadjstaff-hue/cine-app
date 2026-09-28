@@ -1,0 +1,43 @@
+<h1>Mis películas</h1>
+<p class="bajada">Las funciones a las que ya fuiste, con tu calificación.</p>
+
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+@if (cargando()) {
+<p class="aviso">Cargando...</p>
+} @else {
+<div class="grilla">
+    @for (v of vistas(); track v.movieId) {
+    <a class="ficha" [routerLink]="['/pelicula', v.movieId]">
+        <div class="poster">
+            @if (v.poster) {
+            <img [src]="v.poster" [alt]="v.titulo" />
+            } @else {
+            <span>{{ v.titulo.charAt(0) }}</span>
+            }
+        </div>
+
+        <strong>{{ v.titulo }}</strong>
+        <span class="fecha">{{ fecha(v.fecha) }}</span>
+
+        @if (v.funciones > 1) {
+        <span class="fecha">{{ v.funciones }} funciones</span>
+        }
+
+        <span class="puntaje">
+            @if (v.miPuntaje !== null) {
+            @for (e of estrellas; track e) {
+            <span [class.apagada]="e > v.miPuntaje">&#9733;</span>
+            }
+            } @else {
+            <em>Calificar</em>
+            }
+        </span>
+    </a>
+    } @empty {
+    <p class="aviso">Todavía no fuiste a ninguna función. Cuando pase la fecha, tus películas aparecen acá.</p>
+    }
+</div>
+}

@@ -20,7 +20,9 @@ export interface EntradaCompleta {
     fechaCompra: string;
     email: string;
     estado: 'pendiente' | 'pagada' | 'cancelada';
+    movieId: string;
     pelicula: string;
+    poster: string | null;
     clasificacion: 'atp' | 'plus13' | 'plus18';
     inicio: string;
     sala: string;

@@ -103,6 +103,35 @@
                 Mostrar en la portada
             </label>
 
+            <fieldset class="preventa">
+                <legend>Preventa</legend>
+
+                <label class="check">
+                    <input type="checkbox" formControlName="preventa_activa" />
+                    Habilitar preventa con precio especial
+                </label>
+
+                @if (preventaActiva()) {
+                <div class="fila">
+                    <label>
+                        Desde
+                        <input type="datetime-local" formControlName="preventa_inicio" />
+                    </label>
+                    <label>
+                        Hasta
+                        <input type="datetime-local" formControlName="preventa_fin" />
+                    </label>
+                </div>
+
+                <label>
+                    Precio de preventa
+                    <input type="number" formControlName="preventa_precio" min="0" step="100" />
+                </label>
+
+                <small>Al terminar la ventana, el precio vuelve solo al de cada función.</small>
+                }
+            </fieldset>
+
             <button type="submit" [disabled]="enviando()">
                 {{ enviando() ? 'Guardando...' : 'Guardar' }}
             </button>

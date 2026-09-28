@@ -10,6 +10,13 @@
     <a class="volver" [routerLink]="['/pelicula', f.movieId]">Otros horarios</a>
 </header>
 
+@if (f.preventaActiva) {
+<p class="preventa">
+    Preventa activa: precio especial de
+    {{ precioBase() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }} por butaca.
+</p>
+}
+
 @if (bloqueoEdad(); as motivo) {
 <p class="bloqueo">
     {{ motivo }}

@@ -1,0 +1,80 @@
+h1 {
+    margin: 0 0 0.3rem;
+    font-size: 1.4rem;
+}
+
+.bajada {
+    margin: 0 0 1.5rem;
+    color: var(--texto-3);
+    font-size: 0.87rem;
+}
+
+.grilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: 1rem;
+}
+
+.ficha {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    color: inherit;
+    text-decoration: none;
+
+    strong {
+        margin-top: 0.4rem;
+        font-size: 0.9rem;
+    }
+
+    &:hover .poster {
+        outline: 2px solid var(--acento);
+        outline-offset: 2px;
+    }
+}
+
+.poster {
+    aspect-ratio: 2 / 3;
+    display: grid;
+    place-items: center;
+    border-radius: 0.45rem;
+    background: var(--tinta);
+    color: #fff;
+    font-size: 2.5rem;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.fecha {
+    color: var(--texto-3);
+    font-size: 0.75rem;
+}
+
+.puntaje {
+    margin-top: 0.15rem;
+    color: var(--vip);
+    font-size: 0.85rem;
+
+    .apagada {
+        color: var(--borde);
+    }
+
+    em {
+        color: var(--texto-4);
+        font-style: normal;
+        font-size: 0.75rem;
+    }
+}
+
+.aviso {
+    color: var(--texto-3);
+}
+
+.error {
+    color: var(--error);
+}
