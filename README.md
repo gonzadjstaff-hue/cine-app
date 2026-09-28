@@ -184,6 +184,10 @@ El recargo VIP es configurable en `app_config` y se calcula sobre el precio base
 
 No hay pasarela de pago real. La confirmación de compra registra la orden como pagada sin procesar un cobro, lo que está fuera del alcance de la materia.
 
+### Selector de fecha propio
+
+El cliente rechazó explícitamente el `<input type="date">` nativo del navegador (lo marcó como algo a evitar, con una captura de pantalla en el mail). Se construyó `app-date-picker` (`src/app/shared/date-picker`), un `ControlValueAccessor` propio con calendario, navegación por mes/año y valor en formato `YYYY-MM-DD`, que reemplaza al nativo en toda la app: alta y filtro de funciones, estreno y preventa de películas, fecha de nacimiento y rango de reportes.
+
 ### Fuera de alcance
 
 La pantalla con el **mapa del cine** que indica la ubicación de la sala se documenta como requerimiento pendiente: la propia fuente aclara que no cuenta con aprobación.
@@ -212,6 +216,7 @@ La pantalla con el **mapa del cine** que indica la ubicación de la sala se docu
 - Canje de puntos integrado al checkout (contador de entradas a canjear en el mapa de butacas) y canje de productos del candy bar desde "Mis compras"
 - Log de actividad visible en el panel de admin, con auditoría de validaciones de QR
 - Ventana de preventa sugerida automáticamente según `dias_preventa` de `app_config`
+- Selector de fecha propio (sin depender del `<input type="date">` nativo del navegador), usado en toda la app
 
 **Pendiente**
 

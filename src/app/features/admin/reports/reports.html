@@ -9,11 +9,11 @@
 <section class="rango">
     <label>
         Desde
-        <input type="date" [(ngModel)]="desde" />
+        <app-date-picker [(ngModel)]="desde" />
     </label>
     <label>
         Hasta
-        <input type="date" [(ngModel)]="hasta" />
+        <app-date-picker [(ngModel)]="hasta" />
     </label>
     <button type="button" [disabled]="cargando()" (click)="cargar()">
         {{ cargando() ? 'Cargando...' : 'Actualizar' }}

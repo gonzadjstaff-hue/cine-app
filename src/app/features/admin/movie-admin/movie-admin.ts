@@ -2,10 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatosPelicula, MoviesService } from '../../../core/services/movies';
 import { AgeRating, Genre, Movie } from '../../../core/models/movie';
+import { DatePicker } from '../../../shared/date-picker/date-picker';
 
 @Component({
     selector: 'app-movie-admin',
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, DatePicker],
     templateUrl: './movie-admin.html',
     styleUrl: './movie-admin.scss'
 })
