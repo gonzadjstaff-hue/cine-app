@@ -45,6 +45,7 @@ Las migraciones están en `supabase/migrations/` y se aplican en orden desde el 
 | `012_auditoria_validacion.sql` | Auditoría de validación de QR en `activity_log` |
 | `013_push.sql` | Suscripciones a notificaciones push |
 | `014_estado_pelicula.sql` | Estado de la película derivado de la fecha de estreno |
+| `015_realtime_ventas.sql` | Tiempo real solo con butacas vendidas (sin reservas al elegir) |
 
 La Edge Function `supabase/functions/notificar-estrenos` se despliega desde el panel de Supabase (Edge Functions) y necesita los secretos `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` y, opcionalmente, `VAPID_SUBJECT`.
 
@@ -107,7 +108,9 @@ Al cancelar una compra las entradas pasan a `activo = false`: la butaca se liber
 
 ### Selección en tiempo real
 
-Mientras el usuario elige butacas, cada una se reserva en `seat_locks` con vencimiento configurable. La clave primaria `(showtime_id, seat_id)` hace que dos personas no puedan bloquear la misma butaca: la segunda recibe un error de la base. Supabase Realtime notifica los cambios y el mapa se repinta en todos los navegadores abiertos.
+Elegir una butaca no la reserva: el mapa en tiempo real muestra solo las butacas **vendidas**, como en las apps de cine comerciales. Si dos personas eligen la misma butaca a la vez, la que confirma segunda recibe "esa butaca fue tomada" y el mapa se actualiza; la venta doble la impide el índice único.
+
+Para avisar las ventas no alcanza con escuchar `order_tickets` por Realtime: la tabla tiene RLS y cada usuario solo recibe los cambios de sus propias entradas. Por eso un trigger (`trg_avisar_butacas`) emite, en cada venta, cancelación o compra descartada, un aviso **sin datos** al canal de esa función con `realtime.send`. Cada navegador abierto recibe el aviso y vuelve a pedir las butacas ocupadas con `butacas_ocupadas()`, que devuelve solo IDs de butacas. Avisa la base, no el navegador del comprador, así que el aviso llega aunque la compra se haga desde otra pantalla.
 
 ### Disponibilidad pública sin exponer compras
 

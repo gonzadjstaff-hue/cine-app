@@ -33,13 +33,10 @@ export class SeatSelection implements OnInit, OnDestroy {
     private readonly products = inject(ProductsService);
     private readonly rewards = inject(RewardsService);
 
-    private readonly sessionId = crypto.randomUUID();
     private butacas: Seat[] = [];
     private ocupadas = new Set<string>();
-    private bloqueadas = new Set<string>();
     private canal: RealtimeChannel | null = null;
     private recargoVip = 0;
-    private minutosBloqueo = 8;
 
     protected readonly funcion = signal<DetalleFuncion | null>(null);
     protected readonly filas = signal<FilaDeMapa[]>([]);
@@ -69,12 +66,6 @@ export class SeatSelection implements OnInit, OnDestroy {
         if (this.canal) {
             await this.booking.cerrarCanal(this.canal);
         }
-
-        const f = this.funcion();
-
-        if (f) {
-            await this.booking.liberarTodas(f.id, this.sessionId);
-        }
     }
 
     private async cargar(): Promise<void> {
@@ -85,19 +76,16 @@ export class SeatSelection implements OnInit, OnDestroy {
             this.funcion.set(funcion);
             this.verificarEdad(funcion);
 
-            const [butacas, recargo, minutos, productos, combos, recompensas] =
-                await Promise.all([
-                    this.booking.butacasDeSala(funcion.roomId),
-                    this.booking.recargoVip(),
-                    this.booking.minutosBloqueo(),
-                    this.products.listarProductos(),
-                    this.products.listarCombos(),
-                    this.rewards.listar()
-                ]);
+            const [butacas, recargo, productos, combos, recompensas] = await Promise.all([
+                this.booking.butacasDeSala(funcion.roomId),
+                this.booking.recargoVip(),
+                this.products.listarProductos(),
+                this.products.listarCombos(),
+                this.rewards.listar()
+            ]);
 
             this.butacas = butacas;
             this.recargoVip = recargo;
-            this.minutosBloqueo = minutos;
             this.productos.set(productos);
             this.combos.set(combos);
             this.recompensaEntrada.set(recompensas.find((r) => r.esEntrada) ?? null);
@@ -163,13 +151,7 @@ export class SeatSelection implements OnInit, OnDestroy {
             return;
         }
 
-        const [ocupadas, bloqueadas] = await Promise.all([
-            this.booking.butacasOcupadas(funcion.id),
-            this.booking.butacasBloqueadas(funcion.id, this.sessionId)
-        ]);
-
-        this.ocupadas = new Set(ocupadas);
-        this.bloqueadas = new Set(bloqueadas);
+        this.ocupadas = new Set(await this.booking.butacasOcupadas(funcion.id));
 
         const elegidas = new Set(this.seleccion().map((b) => b.id));
         const perdidas = [...elegidas].filter((id) => this.ocupadas.has(id));
@@ -197,7 +179,6 @@ export class SeatSelection implements OnInit, OnDestroy {
             fila.bloques[butaca.bloque - 1].push({
                 ...butaca,
                 ocupada: this.ocupadas.has(butaca.id),
-                bloqueada: this.bloqueadas.has(butaca.id),
                 seleccionada: elegidas.has(butaca.id),
                 precio: this.precioDe(butaca)
             });
@@ -206,41 +187,21 @@ export class SeatSelection implements OnInit, OnDestroy {
         this.filas.set([...porFila.values()]);
     }
 
-    protected async alternar(butaca: ButacaEnMapa): Promise<void> {
-        if (butaca.ocupada || butaca.bloqueada || this.bloqueoEdad() || this.compra()) {
+    // Elegir una butaca no la reserva: solo la compra la ocupa.
+    protected alternar(butaca: ButacaEnMapa): void {
+        if (butaca.ocupada || this.bloqueoEdad() || this.compra()) {
             return;
         }
 
         this.error.set(null);
-        const funcion = this.funcion();
 
-        if (!funcion) {
-            return;
-        }
-
-        if (butaca.seleccionada) {
-            await this.booking.liberar(funcion.id, butaca.id, this.sessionId);
-            this.seleccion.set(this.seleccion().filter((b) => b.id !== butaca.id));
-            await this.refrescarEstado();
-            return;
-        }
-
-        const ok = await this.booking.bloquear(
-            funcion.id,
-            butaca.id,
-            this.sessionId,
-            this.auth.perfil()?.id ?? null,
-            this.minutosBloqueo
+        this.seleccion.set(
+            butaca.seleccionada
+                ? this.seleccion().filter((b) => b.id !== butaca.id)
+                : [...this.seleccion(), { ...butaca, seleccionada: true }]
         );
 
-        if (!ok) {
-            this.error.set('Esa butaca la esta eligiendo otra persona en este momento.');
-            await this.refrescarEstado();
-            return;
-        }
-
-        this.seleccion.set([...this.seleccion(), { ...butaca, seleccionada: true }]);
-        await this.refrescarEstado();
+        this.armarMapa();
     }
 
     protected totalButacas(): number {
@@ -354,24 +315,6 @@ export class SeatSelection implements OnInit, OnDestroy {
         return Math.max(this.total() - this.descuentoCupon() - this.descuentoPorCanje(), 0);
     }
 
-    private async reponerBloqueos(): Promise<void> {
-        const funcion = this.funcion();
-
-        if (!funcion) {
-            return;
-        }
-
-        for (const butaca of this.seleccion()) {
-            await this.booking.bloquear(
-                funcion.id,
-                butaca.id,
-                this.sessionId,
-                this.auth.perfil()?.id ?? null,
-                this.minutosBloqueo
-            );
-        }
-    }
-
     protected async confirmar(): Promise<void> {
         const funcion = this.funcion();
 
@@ -402,7 +345,6 @@ export class SeatSelection implements OnInit, OnDestroy {
                 this.carrito(),
                 this.auth.perfil()?.id ?? null,
                 email,
-                this.sessionId,
                 this.codigoCupon.trim() || null,
                 this.usarCredito,
                 this.canjesEfectivos()
@@ -420,7 +362,6 @@ export class SeatSelection implements OnInit, OnDestroy {
             await this.refrescarEstado();
         } catch (e) {
             this.error.set((e as Error).message);
-            await this.reponerBloqueos();
             await this.refrescarEstado();
         } finally {
             this.comprando.set(false);

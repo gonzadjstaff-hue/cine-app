@@ -94,12 +94,6 @@ h1 {
         background: var(--ok);
     }
 
-    &.bloqueada {
-        border-color: var(--texto-4);
-        background: var(--borde-2);
-        cursor: not-allowed;
-    }
-
     &.ocupada {
         border-color: var(--texto-3);
         background: var(--texto-3);
@@ -136,10 +130,6 @@ h1 {
     &.elegida {
         border-color: var(--ok-2);
         background: var(--ok);
-    }
-
-    &.bloqueada {
-        background: var(--borde-2);
     }
 
     &.ocupada {

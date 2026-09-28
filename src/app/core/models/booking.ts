@@ -10,7 +10,6 @@ export interface Seat {
 
 export interface ButacaEnMapa extends Seat {
     ocupada: boolean;
-    bloqueada: boolean;
     seleccionada: boolean;
     precio: number;
 }
