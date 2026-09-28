@@ -182,6 +182,30 @@
         </span>
     </label>
     }
+
+    @if (recompensaEntrada(); as recompensa) {
+    @if (auth.perfil(); as perfil) {
+    <div class="canje-puntos">
+        <span>
+            Canjear entradas con puntos
+            <em class="detalle">
+                {{ recompensa.costoPuntos }} pts por entrada · tenés {{ perfil.puntos }} pts
+            </em>
+        </span>
+        <div class="contador">
+            <button type="button" [disabled]="canjesEfectivos() === 0" (click)="ajustarCanjes(-1)">-</button>
+            <span>{{ canjesEfectivos() }}</span>
+            <button type="button" [disabled]="canjesEfectivos() >= maxCanjes()" (click)="ajustarCanjes(1)">+</button>
+        </div>
+        @if (canjesEfectivos() > 0) {
+        <em class="ok-cupon">
+            -{{ descuentoPorCanje() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+            · usás {{ puntosDelCanje() }} puntos
+        </em>
+        }
+    </div>
+    }
+    }
 </section>
 
 <aside class="resumen">

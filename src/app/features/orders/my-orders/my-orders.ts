@@ -2,8 +2,17 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { TicketsService } from '../../../core/services/tickets';
 import { BookingService } from '../../../core/services/booking';
+import { ProductsService } from '../../../core/services/products';
+import { RewardsService } from '../../../core/services/rewards';
 import { AuthService } from '../../../core/services/auth';
 import { EntradaCompleta } from '../../../core/models/ticket';
+import { Producto } from '../../../core/models/candy';
+import { Recompensa } from '../../../core/models/reward';
+
+interface RecompensaDeProducto {
+    recompensa: Recompensa;
+    producto: Producto;
+}
 
 @Component({
     selector: 'app-my-orders',
@@ -14,13 +23,17 @@ import { EntradaCompleta } from '../../../core/models/ticket';
 export class MyOrders implements OnInit {
     private readonly ticketsService = inject(TicketsService);
     private readonly booking = inject(BookingService);
+    private readonly products = inject(ProductsService);
+    private readonly rewardsService = inject(RewardsService);
     protected readonly auth = inject(AuthService);
 
     protected readonly compras = signal<EntradaCompleta[]>([]);
+    protected readonly recompensasDeProducto = signal<RecompensaDeProducto[]>([]);
     protected readonly cargando = signal(true);
     protected readonly error = signal<string | null>(null);
     protected readonly aviso = signal<string | null>(null);
     protected readonly cancelando = signal<string | null>(null);
+    protected readonly canjeando = signal<string | null>(null);
 
     async ngOnInit(): Promise<void> {
         try {
@@ -28,12 +41,70 @@ export class MyOrders implements OnInit {
             const id = this.auth.perfil()?.id;
 
             if (id) {
-                this.compras.set(await this.ticketsService.misCompras(id));
+                const [compras, recompensas, productos] = await Promise.all([
+                    this.ticketsService.misCompras(id),
+                    this.rewardsService.listar(),
+                    this.products.listarProductos()
+                ]);
+
+                this.compras.set(compras);
+                this.recompensasDeProducto.set(
+                    recompensas
+                        .filter((r) => !r.esEntrada)
+                        .map((r) => ({
+                            recompensa: r,
+                            producto: productos.find((p) => p.id === r.productId)
+                        }))
+                        .filter(
+                            (r): r is RecompensaDeProducto => r.producto !== undefined
+                        )
+                );
             }
         } catch (e) {
             this.error.set((e as Error).message);
         } finally {
             this.cargando.set(false);
+        }
+    }
+
+    protected puedeCanjear(costoPuntos: number): boolean {
+        return (this.auth.perfil()?.puntos ?? 0) >= costoPuntos;
+    }
+
+    protected async canjearProducto(item: RecompensaDeProducto): Promise<void> {
+        const perfil = this.auth.perfil();
+
+        if (!perfil) {
+            return;
+        }
+
+        this.error.set(null);
+        this.aviso.set(null);
+        this.canjeando.set(item.recompensa.id);
+
+        try {
+            await this.rewardsService.canjearProducto(
+                item.recompensa,
+                item.producto.precio,
+                perfil.id,
+                perfil.email
+            );
+
+            await this.auth.refrescarPerfil();
+
+            const id = this.auth.perfil()?.id;
+
+            if (id) {
+                this.compras.set(await this.ticketsService.misCompras(id));
+            }
+
+            this.aviso.set(
+                `Canjeaste ${item.producto.nombre}. Descargá el código de la compra para retirarlo en el candy bar.`
+            );
+        } catch (e) {
+            this.error.set((e as Error).message);
+        } finally {
+            this.canjeando.set(null);
         }
     }
 

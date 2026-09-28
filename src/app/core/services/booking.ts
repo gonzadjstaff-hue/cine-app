@@ -258,7 +258,8 @@ export class BookingService {
         email: string,
         sessionId: string,
         codigoCupon: string | null,
-        usarCredito: boolean
+        usarCredito: boolean,
+        canjearEntradas: number
     ): Promise<ResultadoCompra> {
         const { data: orden, error: errorOrden } = await this.supabase.client
             .from('orders')
@@ -318,7 +319,8 @@ export class BookingService {
             {
                 p_order_id: id,
                 p_codigo_cupon: codigoCupon,
-                p_usar_credito: usarCredito
+                p_usar_credito: usarCredito,
+                p_canjear_entradas: canjearEntradas
             }
         );
 
