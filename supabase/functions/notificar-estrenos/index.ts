@@ -64,10 +64,12 @@ Deno.serve(async (req) => {
         return responder({ error: 'Solo un administrador puede enviar avisos' }, 403);
     }
 
+    // trim(): el campo de secretos del panel es multilinea y es facil
+    // guardar la clave con un salto de linea al final.
     webpush.setVapidDetails(
-        Deno.env.get('VAPID_SUBJECT') ?? 'mailto:soporte@cine-app-five.vercel.app',
-        Deno.env.get('VAPID_PUBLIC_KEY')!,
-        Deno.env.get('VAPID_PRIVATE_KEY')!
+        (Deno.env.get('VAPID_SUBJECT') ?? 'mailto:soporte@cine-app-five.vercel.app').trim(),
+        (Deno.env.get('VAPID_PUBLIC_KEY') ?? '').trim(),
+        (Deno.env.get('VAPID_PRIVATE_KEY') ?? '').trim()
     );
 
     const { data: pendientes, error: errorAlertas } = await admin
