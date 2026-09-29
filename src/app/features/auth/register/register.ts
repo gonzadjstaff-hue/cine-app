@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
 import { DatePicker } from '../../../shared/date-picker/date-picker';
 
@@ -13,10 +13,11 @@ import { DatePicker } from '../../../shared/date-picker/date-picker';
 export class Register {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
-  private readonly router = inject(Router);
 
   protected readonly error = signal<string | null>(null);
   protected readonly enviando = signal(false);
+  // null mientras se completa el formulario; después, si falta confirmar el mail.
+  protected readonly creada = signal<{ confirmar: boolean; email: string } | null>(null);
 
   protected readonly formulario = this.fb.nonNullable.group({
     nombre: ['', Validators.required],
@@ -36,8 +37,16 @@ export class Register {
     this.error.set(null);
 
     try {
-      await this.auth.registrar(this.formulario.getRawValue());
-      await this.router.navigate(['/cartelera']);
+      const datos = this.formulario.getRawValue();
+      const confirmar = await this.auth.registrar(datos);
+
+      // Sin confirmación por mail, signUp deja la sesión abierta: se cierra
+      // para que el usuario ingrese desde el botón, como pidió el cliente.
+      if (!confirmar) {
+        await this.auth.salir();
+      }
+
+      this.creada.set({ confirmar, email: datos.email });
     } catch (e) {
       this.error.set((e as Error).message);
     } finally {

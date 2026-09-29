@@ -34,5 +34,8 @@
 </header>
 
 <main class="contenido">
+  @if (auth.bienvenida(); as mensaje) {
+    <p class="bienvenida" role="status">{{ mensaje }}</p>
+  }
   <router-outlet />
 </main>

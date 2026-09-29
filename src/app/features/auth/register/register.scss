@@ -7,6 +7,31 @@
     }
 }
 
+.info {
+    margin: 0 0 1.25rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 0.5rem;
+    background: var(--accesible-suave);
+    color: var(--accesible);
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+.boton {
+    display: block;
+    padding: 0.7rem 1rem;
+    border-radius: 0.45rem;
+    background: var(--acento);
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+
+    &:hover {
+        background: var(--acento-2);
+    }
+}
+
 .pie {
     margin-top: 1rem;
     font-size: 0.9rem;
