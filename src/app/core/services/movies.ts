@@ -136,6 +136,34 @@ export class MoviesService {
         return movieId;
     }
 
+    // Sube el poster al bucket "posters" y devuelve su URL publica,
+    // que es lo que se guarda en movies.poster_url.
+    async subirPoster(archivo: File): Promise<string> {
+        const extension = archivo.name.split('.').pop()?.toLowerCase() || 'jpg';
+        const ruta = `${crypto.randomUUID()}.${extension}`;
+
+        const { error } = await this.supabase.client.storage
+            .from('posters')
+            .upload(ruta, archivo, { contentType: archivo.type, cacheControl: '31536000' });
+
+        if (error) {
+            throw new Error(`No se pudo subir el póster: ${error.message}`);
+        }
+
+        return this.supabase.client.storage.from('posters').getPublicUrl(ruta).data.publicUrl;
+    }
+
+    // Borra del bucket un poster reemplazado. Si la URL no es del bucket
+    // (un poster viejo cargado a mano) no hace nada.
+    async borrarPoster(url: string | null): Promise<void> {
+        const marca = '/storage/v1/object/public/posters/';
+        const ruta = url?.split(marca)[1];
+
+        if (ruta) {
+            await this.supabase.client.storage.from('posters').remove([ruta]);
+        }
+    }
+
     async eliminar(id: string): Promise<void> {
         const { error } = await this.supabase.client.from('movies').delete().eq('id', id);
 
