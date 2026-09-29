@@ -83,6 +83,13 @@ export const routes: Routes = [
             )
     },
     {
+        path: 'admin/cupones',
+        title: 'Administrar cupones',
+        canActivate: [rolGuard(['admin'])],
+        loadComponent: () =>
+            import('./features/admin/coupon-admin/coupon-admin').then((m) => m.CouponAdmin)
+    },
+    {
         path: 'admin/reportes',
         title: 'Reportes',
         canActivate: [rolGuard(['admin'])],

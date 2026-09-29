@@ -28,7 +28,7 @@ export class ShowtimeAdmin {
     protected readonly formatos: FilmFormat[] = ['2D', '3D', '4D', '5D'];
     protected readonly idiomas: LanguageType[] = ['castellano', 'subtitulado'];
     protected readonly horariosSugeridos = [
-        '12:00', '14:00', '16:00', '17:30', '19:00', '20:30', '22:00', '23:30'
+        '11:00', '12:00', '14:00', '16:00', '17:30', '19:00', '20:30', '22:00', '23:30'
     ];
 
     protected horariosElegidos = new Set<string>();

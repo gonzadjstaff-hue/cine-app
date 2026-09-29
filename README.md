@@ -46,6 +46,7 @@ Las migraciones están en `supabase/migrations/` y se aplican en orden desde el 
 | `013_push.sql` | Suscripciones a notificaciones push |
 | `014_estado_pelicula.sql` | Estado de la película derivado de la fecha de estreno |
 | `015_realtime_ventas.sql` | Tiempo real solo con butacas vendidas (sin reservas al elegir) |
+| `016_cupones_abm.sql` | Unifica el % de primera compra en el cupón (ABM de cupones) |
 
 La Edge Function `supabase/functions/notificar-estrenos` se despliega desde el panel de Supabase (Edge Functions) y necesita los secretos `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` y, opcionalmente, `VAPID_SUBJECT`.
 
