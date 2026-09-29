@@ -60,7 +60,9 @@ export const routes: Routes = [
     {
         path: 'validar',
         title: 'Validar entrada',
-        canActivate: [rolGuard(['empleado', 'admin'])],
+        // Solo el empleado ve la pantalla; en la base el admin conserva el
+        // permiso (es_staff) por si tiene que validar desde la API.
+        canActivate: [rolGuard(['empleado'])],
         loadComponent: () =>
             import('./features/staff/validate/validate').then((m) => m.Validate)
     },

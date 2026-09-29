@@ -12,7 +12,7 @@
       <a routerLink="/admin/actividad" routerLinkActive="activo">Actividad</a>
     }
 
-    @if (auth.esStaff()) {
+    @if (auth.esEmpleado()) {
       <a routerLink="/validar" routerLinkActive="activo">Validar</a>
     }
 
