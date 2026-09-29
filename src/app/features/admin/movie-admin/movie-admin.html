@@ -41,10 +41,40 @@
                 <input type="text" formControlName="titulo" />
             </label>
 
-            <label>
-                URL del póster
-                <input type="url" formControlName="poster_url" placeholder="https://..." />
-            </label>
+            <fieldset class="poster">
+                <legend>Póster</legend>
+
+                <div class="poster-fila">
+                    <div class="miniatura">
+                        @if (posterActual(); as src) {
+                        <img [src]="src" alt="Póster" />
+                        } @else {
+                        <span>Sin póster</span>
+                        }
+                    </div>
+
+                    <div class="poster-acciones">
+                        <label class="subir">
+                            {{ posterActual() ? 'Cambiar imagen' : 'Elegir imagen' }}
+                            <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                (change)="elegirPoster($any($event.target))" />
+                        </label>
+
+                        @if (posterActual()) {
+                        <button type="button" class="quitar" (click)="quitarPoster()">Quitar</button>
+                        }
+
+                        <small>
+                            JPG, PNG o WebP de hasta 5 MB.
+                            @if (archivoPoster()) {
+                            Se sube al guardar.
+                            }
+                        </small>
+                    </div>
+                </div>
+            </fieldset>
 
             <div class="fila">
                 <label>

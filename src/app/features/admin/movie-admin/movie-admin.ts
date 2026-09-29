@@ -4,6 +4,10 @@ import { DatosPelicula, MoviesService } from '../../../core/services/movies';
 import { AgeRating, Genre, Movie } from '../../../core/models/movie';
 import { DatePicker } from '../../../shared/date-picker/date-picker';
 
+// Mismos limites que el bucket "posters" (017_posters_storage.sql).
+const TIPOS_POSTER = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_POSTER_BYTES = 5 * 1024 * 1024;
+
 @Component({
     selector: 'app-movie-admin',
     imports: [ReactiveFormsModule, DatePicker],
@@ -21,6 +25,9 @@ export class MovieAdmin {
     protected readonly editando = signal<string | null>(null);
     protected readonly error = signal<string | null>(null);
     protected readonly enviando = signal(false);
+    // Imagen elegida desde la computadora, pendiente de subir al guardar.
+    protected readonly archivoPoster = signal<File | null>(null);
+    protected readonly vistaPrevia = signal<string | null>(null);
 
     protected readonly clasificaciones: AgeRating[] = ['atp', 'plus13', 'plus18'];
     protected generosElegidos = new Set<string>();
@@ -111,6 +118,7 @@ export class MovieAdmin {
 
     protected nuevo(): void {
         this.editando.set(null);
+        this.limpiarVistaPrevia();
         this.generosElegidos = new Set();
         this.formulario.reset({
             titulo: '',
@@ -130,6 +138,7 @@ export class MovieAdmin {
 
     protected editar(pelicula: Movie): void {
         this.editando.set(pelicula.id);
+        this.limpiarVistaPrevia();
         this.generosElegidos = new Set(pelicula.generos.map((g) => g.id));
         this.formulario.setValue({
             titulo: pelicula.titulo,
@@ -193,15 +202,80 @@ export class MovieAdmin {
             generos: [...this.generosElegidos]
         };
 
+        const anterior = this.peliculas().find((p) => p.id === this.editando())?.poster_url ?? null;
+        const archivo = this.archivoPoster();
+        let subido: string | null = null;
+
         try {
+            // Primero se sube la imagen: si falla, la pelicula no se toca.
+            if (archivo) {
+                subido = await this.moviesService.subirPoster(archivo);
+                datos.poster_url = subido;
+            }
+
             await this.moviesService.guardar(datos, this.editando() ?? undefined);
+
+            if (anterior && anterior !== datos.poster_url) {
+                await this.moviesService.borrarPoster(anterior);
+            }
+
             await this.refrescar();
             this.nuevo();
         } catch (e) {
+            // Si la imagen subio pero la pelicula no se guardo, no queda huerfana.
+            if (subido) {
+                await this.moviesService.borrarPoster(subido);
+            }
+
             this.error.set((e as Error).message);
         } finally {
             this.enviando.set(false);
         }
+    }
+
+    protected elegirPoster(campo: HTMLInputElement): void {
+        const archivo = campo.files?.[0];
+        campo.value = '';
+
+        if (!archivo) {
+            return;
+        }
+
+        if (!TIPOS_POSTER.includes(archivo.type)) {
+            this.error.set('El póster tiene que ser una imagen JPG, PNG o WebP.');
+            return;
+        }
+
+        if (archivo.size > MAX_POSTER_BYTES) {
+            this.error.set('El póster no puede pesar más de 5 MB.');
+            return;
+        }
+
+        this.error.set(null);
+        this.limpiarVistaPrevia();
+        this.archivoPoster.set(archivo);
+        this.vistaPrevia.set(URL.createObjectURL(archivo));
+    }
+
+    protected quitarPoster(): void {
+        this.limpiarVistaPrevia();
+        this.formulario.controls.poster_url.setValue('');
+    }
+
+    // Lo que se ve en el formulario: la imagen recien elegida o la guardada.
+    protected posterActual(): string | null {
+        return this.vistaPrevia() ?? (this.formulario.controls.poster_url.value || null);
+    }
+
+    private limpiarVistaPrevia(): void {
+        const previa = this.vistaPrevia();
+
+        if (previa) {
+            URL.revokeObjectURL(previa);
+        }
+
+        this.vistaPrevia.set(null);
+        this.archivoPoster.set(null);
     }
 
     protected async eliminar(pelicula: Movie): Promise<void> {
@@ -209,6 +283,7 @@ export class MovieAdmin {
 
         try {
             await this.moviesService.eliminar(pelicula.id);
+            await this.moviesService.borrarPoster(pelicula.poster_url);
             await this.refrescar();
 
             if (this.editando() === pelicula.id) {
