@@ -71,15 +71,13 @@ export class MovieAdmin {
             return;
         }
 
-        const fin = new Date(`${estreno}T00:00`);
-        const inicio = new Date(fin.getTime() - this.diasPreventa * 86400000);
-        const local = (d: Date) => {
-            const p = (n: number) => String(n).padStart(2, '0');
-            return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
-        };
+        // Del dia N antes del estreno hasta el dia anterior al estreno.
+        const [anio, mes, dia] = estreno.split('-').map(Number);
+        const inicio = new Date(anio, mes - 1, dia - this.diasPreventa);
+        const fin = new Date(anio, mes - 1, dia - 1);
 
-        c.preventa_inicio.setValue(local(inicio));
-        c.preventa_fin.setValue(local(fin));
+        c.preventa_inicio.setValue(this.aIso(inicio));
+        c.preventa_fin.setValue(this.aIso(fin));
     }
 
     protected leyendaPreventa(): string {
@@ -143,8 +141,8 @@ export class MovieAdmin {
             fecha_estreno: pelicula.fecha_estreno,
             destacada_home: pelicula.destacada_home,
             preventa_activa: pelicula.preventa_activa,
-            preventa_inicio: this.aFechaLocal(pelicula.preventa_inicio),
-            preventa_fin: this.aFechaLocal(pelicula.preventa_fin),
+            preventa_inicio: this.aFecha(pelicula.preventa_inicio),
+            preventa_fin: this.aFecha(pelicula.preventa_fin, true),
             preventa_precio: pelicula.preventa_precio ?? 0
         });
     }
@@ -173,14 +171,24 @@ export class MovieAdmin {
             return;
         }
 
+        if (conPreventa && valores.preventa_fin < valores.preventa_inicio) {
+            this.error.set('La preventa no puede terminar antes de empezar.');
+            this.enviando.set(false);
+            return;
+        }
+
+        // La ventana es por dia completo, en hora local: desde las 00:00
+        // del primer dia hasta las 23:59 del ultimo.
         const datos: DatosPelicula = {
             ...valores,
             poster_url: valores.poster_url.trim() || null,
             preventa_activa: !!conPreventa,
             preventa_inicio: conPreventa
-                ? new Date(valores.preventa_inicio).toISOString()
+                ? new Date(`${valores.preventa_inicio}T00:00`).toISOString()
                 : null,
-            preventa_fin: conPreventa ? new Date(valores.preventa_fin).toISOString() : null,
+            preventa_fin: conPreventa
+                ? new Date(`${valores.preventa_fin}T23:59:59`).toISOString()
+                : null,
             preventa_precio: conPreventa ? valores.preventa_precio : null,
             generos: [...this.generosElegidos]
         };
@@ -211,14 +219,20 @@ export class MovieAdmin {
         }
     }
 
-    private aFechaLocal(iso: string | null): string {
+    // esFin: las preventas cargadas antes de este cambio terminan justo a
+    // las 00:00 del estreno; restando un segundo se muestra el dia anterior,
+    // que es el ultimo dia real de la ventana.
+    private aFecha(iso: string | null, esFin = false): string {
         if (!iso) {
             return '';
         }
 
-        const d = new Date(iso);
+        return this.aIso(new Date(new Date(iso).getTime() - (esFin ? 1000 : 0)));
+    }
+
+    private aIso(d: Date): string {
         const p = (n: number) => String(n).padStart(2, '0');
-        return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+        return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
     }
 
     // Misma regla que la funcion estado() de la base: se muestra

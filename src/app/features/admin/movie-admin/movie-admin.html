@@ -107,16 +107,14 @@
                 </label>
 
                 @if (preventaActiva()) {
-                <div class="fila">
-                    <label>
-                        Desde
-                        <input type="datetime-local" formControlName="preventa_inicio" />
-                    </label>
-                    <label>
-                        Hasta
-                        <input type="datetime-local" formControlName="preventa_fin" />
-                    </label>
-                </div>
+                <label>
+                    Desde
+                    <app-date-picker formControlName="preventa_inicio" />
+                </label>
+                <label>
+                    Hasta (inclusive)
+                    <app-date-picker formControlName="preventa_fin" />
+                </label>
 
                 <label>
                     Precio de preventa
