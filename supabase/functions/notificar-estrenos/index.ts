@@ -23,6 +23,23 @@ function responder(cuerpo: unknown, estado = 200): Response {
     });
 }
 
+// Los proyectos con el sistema de claves nuevo exponen SUPABASE_SECRET_KEYS
+// (un JSON { nombre: clave }) en lugar de SUPABASE_SERVICE_ROLE_KEY.
+function claveDeServicio(): string {
+    const legacy = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (legacy) {
+        return legacy;
+    }
+
+    const nuevas = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') ?? '{}') as Record<
+        string,
+        string
+    >;
+
+    return nuevas['default'] ?? Object.values(nuevas)[0] ?? '';
+}
+
 interface Alerta {
     movie_id: string;
     user_id: string;
@@ -41,10 +58,7 @@ Deno.serve(async (req) => {
         return new Response('ok', { headers: CORS });
     }
 
-    const admin = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    const admin = createClient(Deno.env.get('SUPABASE_URL')!, claveDeServicio());
 
     // Solo un administrador puede disparar el envio.
     const token = (req.headers.get('Authorization') ?? '').replace('Bearer ', '');
