@@ -1,4 +1,18 @@
 <section class="panel">
+    @if (creada(); as cuenta) {
+    <h1>¡Cuenta creada!</h1>
+
+    @if (cuenta.confirmar) {
+    <p class="info">
+        Te enviamos un mail a <strong>{{ cuenta.email }}</strong> para confirmar la cuenta.
+        Abrí el enlace y después ingresá. Si no lo ves, revisá la carpeta de spam.
+    </p>
+    } @else {
+    <p class="info">Ya podés ingresar con tu email y contraseña.</p>
+    }
+
+    <a class="boton" routerLink="/ingresar">Ingresar</a>
+    } @else {
     <h1>Crear cuenta</h1>
 
     <form [formGroup]="formulario" (ngSubmit)="enviar()">
@@ -42,4 +56,5 @@
     <p class="pie">
         ¿Ya tenés cuenta? <a routerLink="/ingresar">Ingresá</a>
     </p>
+    }
 </section>
