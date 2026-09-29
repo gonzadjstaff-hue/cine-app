@@ -1,0 +1,100 @@
+<h1>Administrar cupones</h1>
+
+@if (error()) {
+<p class="error">{{ error() }}</p>
+}
+
+<div class="columnas">
+    <section class="listado">
+        <div class="encabezado">
+            <h2>{{ cupones().length }} cupones</h2>
+            <button type="button" (click)="nuevo()">Nuevo</button>
+        </div>
+
+        @for (c of cupones(); track c.id) {
+        <article [class.activa]="editando() === c.id" [class.inactivo]="!c.activo">
+            <div>
+                <strong>{{ c.codigo }}</strong>
+                <em class="pct">{{ c.descuento_pct }}%</em>
+                @if (!c.activo) {
+                <em class="baja">inactivo</em>
+                }
+                <span class="meta">
+                    @if (c.descripcion) {
+                    {{ c.descripcion }} ·
+                    }
+                    {{ condiciones(c) }}
+                </span>
+            </div>
+            <div class="acciones">
+                <button type="button" (click)="editar(c)">Editar</button>
+                <button type="button" [class.peligro]="c.activo" (click)="alternarActivo(c)">
+                    {{ c.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+            </div>
+        </article>
+        } @empty {
+        <p class="aviso">Todavía no hay cupones cargados.</p>
+        }
+    </section>
+
+    <section class="panel">
+        <h2>{{ editando() ? 'Editar cupón' : 'Nuevo cupón' }}</h2>
+
+        <form [formGroup]="formulario" (ngSubmit)="guardar()">
+            <div class="fila">
+                <label>
+                    Código
+                    <input type="text" formControlName="codigo" placeholder="MARTES" />
+                </label>
+
+                <label>
+                    Descuento (%)
+                    <input type="number" formControlName="descuento_pct" min="1" max="100" />
+                </label>
+            </div>
+
+            <label>
+                Descripción
+                <input type="text" formControlName="descripcion" />
+            </label>
+
+            <label class="check">
+                <input type="checkbox" formControlName="primera_compra" />
+                Solo para la primera compra de cada cliente
+            </label>
+
+            <div class="fila">
+                <label>
+                    Edad mínima
+                    <input type="number" formControlName="edad_minima" min="0" placeholder="Sin límite" />
+                </label>
+
+                <label>
+                    Usos máximos
+                    <input type="number" formControlName="usos_maximos" min="1" placeholder="Ilimitado" />
+                </label>
+            </div>
+
+            <label>
+                Válido desde
+                <app-date-picker formControlName="valido_desde" />
+            </label>
+
+            <label>
+                Válido hasta
+                <app-date-picker formControlName="valido_hasta" />
+                <small>Sin fechas, el cupón vale siempre mientras esté activo.</small>
+            </label>
+
+            <label class="check">
+                <input type="checkbox" formControlName="activo" />
+                Activo
+            </label>
+
+            <button type="submit" [disabled]="enviando()">
+                {{ enviando() ? 'Guardando...' : 'Guardar' }}
+            </button>
+        </form>
+    </section>
+</div>
