@@ -41,7 +41,8 @@ export class AuthService {
     readonly autenticado = computed(() => this.sesion() !== null);
     readonly rol = computed<UserRole | null>(() => this.perfil()?.rol ?? null);
     readonly esAdmin = computed(() => this.rol() === 'admin');
-    readonly esStaff = computed(() => this.rol() === 'admin' || this.rol() === 'empleado');
+    readonly esEmpleado = computed(() => this.rol() === 'empleado');
+    readonly esStaff = computed(() => this.esAdmin() || this.esEmpleado());
     readonly nombreCompleto = computed(() => {
         const p = this.perfil();
         return p ? `${p.nombre} ${p.apellido}`.trim() : '';
