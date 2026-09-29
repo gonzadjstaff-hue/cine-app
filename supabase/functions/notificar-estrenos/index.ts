@@ -58,12 +58,15 @@ Deno.serve(async (req) => {
         return new Response('ok', { headers: CORS });
     }
 
+    console.log('[notificar-estrenos] Iniciando función...');
     const admin = createClient(Deno.env.get('SUPABASE_URL')!, claveDeServicio());
 
     // Solo un administrador puede disparar el envio.
     const token = (req.headers.get('Authorization') ?? '').replace('Bearer ', '');
+    console.log('[notificar-estrenos] Token recibido:', token.substring(0, 20) + '...');
     const { data: sesion } = await admin.auth.getUser(token);
 
+    console.log('[notificar-estrenos] Sesión:', sesion?.user?.id);
     if (!sesion?.user) {
         return responder({ error: 'No autenticado' }, 401);
     }
@@ -73,6 +76,8 @@ Deno.serve(async (req) => {
         .select('rol')
         .eq('id', sesion.user.id)
         .single();
+
+    console.log('[notificar-estrenos] Perfil:', perfil?.rol);
 
     if (perfil?.rol !== 'admin') {
         return responder({ error: 'Solo un administrador puede enviar avisos' }, 403);
@@ -86,18 +91,22 @@ Deno.serve(async (req) => {
         (Deno.env.get('VAPID_PRIVATE_KEY') ?? '').trim()
     );
 
+    console.log('[notificar-estrenos] Buscando alertas pendientes...');
     const { data: pendientes, error: errorAlertas } = await admin
         .from('release_alerts')
         .select('movie_id, user_id')
         .eq('notificado', false);
 
     if (errorAlertas) {
+        console.error('[notificar-estrenos] Error en alertas:', errorAlertas);
         return responder({ error: errorAlertas.message }, 500);
     }
 
     const alertas = (pendientes ?? []) as Alerta[];
+    console.log('[notificar-estrenos] Alertas encontradas:', alertas.length);
 
     if (!alertas.length) {
+        console.log('[notificar-estrenos] No hay alertas pendientes');
         return responder({ enviadas: 0, alertas: 0 });
     }
 
@@ -188,8 +197,10 @@ Deno.serve(async (req) => {
     }
 
     if (vencidas.length) {
+        console.log('[notificar-estrenos] Eliminando suscripciones vencidas:', vencidas.length);
         await admin.from('push_subscriptions').delete().in('id', vencidas);
     }
 
+    console.log('[notificar-estrenos] Finalizando. Enviadas:', enviadas, 'Alertas cumplidas:', alertasCumplidas);
     return responder({ enviadas, alertas: alertasCumplidas });
 });
