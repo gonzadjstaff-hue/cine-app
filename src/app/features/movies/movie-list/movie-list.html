@@ -7,7 +7,7 @@
             <span class="numero">{{ i + 1 }}</span>
             <div class="mini">
                 @if (p.poster_url) {
-                <img [src]="p.poster_url" [alt]="p.titulo" />
+                <img [src]="p.poster_url" [alt]="p.titulo" [appPosterRespaldo]="p.titulo" />
                 } @else {
                 <span>{{ p.titulo.charAt(0) }}</span>
                 }
@@ -48,7 +48,7 @@
     <a class="tarjeta" [routerLink]="['/pelicula', p.id]">
         <div class="poster">
             @if (p.poster_url) {
-            <img [src]="p.poster_url" [alt]="p.titulo" />
+            <img [src]="p.poster_url" [alt]="p.titulo" [appPosterRespaldo]="p.titulo" />
             } @else {
             <span>{{ p.titulo.charAt(0) }}</span>
             }

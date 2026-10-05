@@ -4,10 +4,11 @@ import { MoviesService } from '../../../core/services/movies';
 import { AuthService } from '../../../core/services/auth';
 import { PushService } from '../../../core/services/push';
 import { AgeRating, Movie } from '../../../core/models/movie';
+import { PosterRespaldo } from '../../../shared/directives/poster-respaldo';
 
 @Component({
     selector: 'app-coming-soon',
-    imports: [RouterLink],
+    imports: [RouterLink, PosterRespaldo],
     templateUrl: './coming-soon.html',
     styleUrl: './coming-soon.scss'
 })

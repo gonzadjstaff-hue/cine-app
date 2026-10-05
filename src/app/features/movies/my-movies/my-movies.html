@@ -13,7 +13,7 @@
     <a class="ficha" [routerLink]="['/pelicula', v.movieId]">
         <div class="poster">
             @if (v.poster) {
-            <img [src]="v.poster" [alt]="v.titulo" />
+            <img [src]="v.poster" [alt]="v.titulo" [appPosterRespaldo]="v.titulo" />
             } @else {
             <span>{{ v.titulo.charAt(0) }}</span>
             }

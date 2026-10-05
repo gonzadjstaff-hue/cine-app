@@ -4,10 +4,11 @@ import { RouterLink } from '@angular/router';
 import { MoviesService } from '../../../core/services/movies';
 import { AgeRating, Genre, Movie } from '../../../core/models/movie';
 import { DuracionPipe } from '../../../shared/pipes/duracion-pipe';
+import { PosterRespaldo } from '../../../shared/directives/poster-respaldo';
 
 @Component({
   selector: 'app-movie-list',
-  imports: [FormsModule, RouterLink, DuracionPipe],
+  imports: [FormsModule, RouterLink, DuracionPipe, PosterRespaldo],
   templateUrl: './movie-list.html',
   styleUrl: './movie-list.scss'
 })

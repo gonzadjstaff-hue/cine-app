@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TicketsService } from '../../../core/services/tickets';
 import { ReviewsService } from '../../../core/services/reviews';
 import { AuthService } from '../../../core/services/auth';
+import { PosterRespaldo } from '../../../shared/directives/poster-respaldo';
 
 interface PeliculaVista {
     movieId: string;
@@ -15,7 +16,7 @@ interface PeliculaVista {
 
 @Component({
     selector: 'app-my-movies',
-    imports: [RouterLink],
+    imports: [RouterLink, PosterRespaldo],
     templateUrl: './my-movies.html',
     styleUrl: './my-movies.scss'
 })

@@ -9,6 +9,7 @@ import { AgeRating, Movie } from '../../../core/models/movie';
 import { FuncionDeCartelera } from '../../../core/models/booking';
 import { ResumenResenas, Review } from '../../../core/models/review';
 import { DuracionPipe } from '../../../shared/pipes/duracion-pipe';
+import { PosterRespaldo } from '../../../shared/directives/poster-respaldo';
 
 interface DiaDeFunciones {
     etiqueta: string;
@@ -17,7 +18,7 @@ interface DiaDeFunciones {
 
 @Component({
     selector: 'app-movie-detail',
-    imports: [RouterLink, FormsModule, DuracionPipe],
+    imports: [RouterLink, FormsModule, DuracionPipe, PosterRespaldo],
     templateUrl: './movie-detail.html',
     styleUrl: './movie-detail.scss'
 })
