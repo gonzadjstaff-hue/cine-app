@@ -18,7 +18,7 @@
         <h1>{{ p.titulo }}</h1>
         <p class="meta">
             <span class="edad">{{ etiquetaEdad(p.clasificacion) }}</span>
-            {{ duracion(p.duracion_min) }}
+            {{ p.duracion_min | duracion }}
             @if (resumen().promedio !== null) {
             <span class="puntaje">
                 &#9733; {{ resumen().promedio }} ({{ resumen().cantidad }})

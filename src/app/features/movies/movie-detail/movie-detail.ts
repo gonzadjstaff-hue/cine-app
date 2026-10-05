@@ -8,6 +8,7 @@ import { AuthService } from '../../../core/services/auth';
 import { AgeRating, Movie } from '../../../core/models/movie';
 import { FuncionDeCartelera } from '../../../core/models/booking';
 import { ResumenResenas, Review } from '../../../core/models/review';
+import { DuracionPipe } from '../../../shared/pipes/duracion-pipe';
 
 interface DiaDeFunciones {
     etiqueta: string;
@@ -16,7 +17,7 @@ interface DiaDeFunciones {
 
 @Component({
     selector: 'app-movie-detail',
-    imports: [RouterLink, FormsModule],
+    imports: [RouterLink, FormsModule, DuracionPipe],
     templateUrl: './movie-detail.html',
     styleUrl: './movie-detail.scss'
 })
@@ -95,12 +96,6 @@ export class MovieDetail implements OnInit {
             plus18: '+18'
         };
         return etiquetas[clasificacion];
-    }
-
-    protected duracion(minutos: number): string {
-        const horas = Math.floor(minutos / 60);
-        const resto = minutos % 60;
-        return horas > 0 ? `${horas} h ${resto} min` : `${resto} min`;
     }
 
     private async cargarResenas(): Promise<void> {

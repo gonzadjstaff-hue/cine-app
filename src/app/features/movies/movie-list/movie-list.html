@@ -14,7 +14,7 @@
             </div>
             <div>
                 <strong>{{ p.titulo }}</strong>
-                <span class="chico">{{ etiquetaEdad(p.clasificacion) }} · {{ duracion(p.duracion_min) }}</span>
+                <span class="chico">{{ etiquetaEdad(p.clasificacion) }} · {{ p.duracion_min | duracion }}</span>
             </div>
         </a>
         }
@@ -58,7 +58,7 @@
             <h2>{{ p.titulo }}</h2>
             <p class="meta">
                 <span class="edad">{{ etiquetaEdad(p.clasificacion) }}</span>
-                {{ duracion(p.duracion_min) }}
+                {{ p.duracion_min | duracion }}
             </p>
 
             @if (p.generos.length) {

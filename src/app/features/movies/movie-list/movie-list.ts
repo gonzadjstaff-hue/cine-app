@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MoviesService } from '../../../core/services/movies';
 import { AgeRating, Genre, Movie } from '../../../core/models/movie';
+import { DuracionPipe } from '../../../shared/pipes/duracion-pipe';
 
 @Component({
   selector: 'app-movie-list',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, DuracionPipe],
   templateUrl: './movie-list.html',
   styleUrl: './movie-list.scss'
 })
@@ -71,11 +72,5 @@ export class MovieList {
       plus18: '+18'
     };
     return etiquetas[clasificacion];
-  }
-
-  protected duracion(minutos: number): string {
-    const horas = Math.floor(minutos / 60);
-    const resto = minutos % 60;
-    return horas > 0 ? `${horas} h ${resto} min` : `${resto} min`;
   }
 }
