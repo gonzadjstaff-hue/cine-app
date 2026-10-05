@@ -16,17 +16,15 @@
     <h1>Crear cuenta</h1>
 
     <form [formGroup]="formulario" (ngSubmit)="enviar()">
-        <div class="fila">
-            <label>
-                Nombre
-                <input type="text" formControlName="nombre" />
-            </label>
+        <label>
+            Nombre
+            <input type="text" formControlName="nombre" />
+        </label>
 
-            <label>
-                Apellido
-                <input type="text" formControlName="apellido" />
-            </label>
-        </div>
+        <label>
+            Apellido
+            <input type="text" formControlName="apellido" />
+        </label>
 
         <label>
             Email
