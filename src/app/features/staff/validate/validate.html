@@ -8,11 +8,19 @@
         (keyup.enter)="buscar()" />
     <button type="button" [disabled]="buscando()" (click)="buscar()">Buscar</button>
     <button type="button" class="secundario" (click)="limpiar()">Limpiar</button>
+    <button type="button" class="camara" (click)="escanear()">
+        {{ escaneando() ? 'Cerrar camara' : 'Escanear QR' }}
+    </button>
 </section>
 
 <p class="ayuda">
-    Escanea el QR de la entrada o escribi el codigo a mano si el lector falla.
+    Escanea el QR de la entrada con la camara o escribi el codigo a mano si el lector falla.
 </p>
+
+<div class="visor" [hidden]="!escaneando()">
+    <video #video playsinline muted></video>
+    <p>Apunta la camara al QR de la entrada.</p>
+</div>
 
 @if (error()) {
 <p class="error">{{ error() }}</p>

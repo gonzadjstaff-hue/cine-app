@@ -30,6 +30,10 @@ h1 {
             background: var(--borde-2);
             color: var(--tinta-2);
         }
+
+        &.camara {
+            background: var(--ok);
+        }
     }
 }
 
@@ -37,6 +41,29 @@ h1 {
     margin: 0.6rem 0 1.25rem;
     color: var(--texto-3);
     font-size: 0.82rem;
+}
+
+.visor {
+    max-width: 26rem;
+    margin: 0 0 1.25rem;
+
+    &[hidden] {
+        display: none;
+    }
+
+    video {
+        display: block;
+        width: 100%;
+        border: 2px solid var(--tinta);
+        border-radius: 0.6rem;
+        background: #000;
+    }
+
+    p {
+        margin: 0.4rem 0 0;
+        color: var(--texto-3);
+        font-size: 0.82rem;
+    }
 }
 
 .resultado {
